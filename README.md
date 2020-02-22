@@ -37,7 +37,7 @@ DATA SET level 1 - moderate amount of information
 		- data_point = [ 2, open_1, close_1, open_2, close_2 ]
 		- tag        = [ true ]
 
-DATA SET level 3 - all information available in yahoo finance api
+DATA SET level 2 - all information available in yahoo finance api
 
 	- the most information available from the api is:
 		- n previous days' data including:
@@ -68,18 +68,19 @@ def random_dates():
 	- date_2 is (1-30) days after date_1
 	- format: YYYY-MM-DD
 
-def random_investment( stock, amount_invested ):
+def random_investment( level, n ):
 
 	- random_investment function
+	- where level denotes which data level to produce data points for
+	- and n is how many days of history to include
 	- investments < 30 days, randomized length of time
-	- takes a stock, and amount_invested
-	- returns float of delta
+	- returns data point asa a 1D list of doubles
 	- uses yahoo finance api
 	- assumes bought at open price
 	- and sold at close price
-	- example usage; we invest $1,000.00 in Rite Aid on a random date
-		- delta = investment( "RAD", 1000 )
-		- print( "Delta: " + str(round(delta,3)) )
+	- example usage; we want a level 2 data point focusing on 30 days of stock history
+		- data_point = random_investment( 2, 30 )
+		- print( data_point )
 
 # DATA PROCESSING
 
