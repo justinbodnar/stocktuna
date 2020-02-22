@@ -9,30 +9,34 @@ QUESTION: How wo we create a data set to train on historical trends?
 
 DATA SET level 0 - least amount of information
 
-	- we're only answering the question, 'can this be a good investment?'
+	- we're asking the question:
+	- 'Considering the past n days of price changes, should I invest, and for how long?'
 	- datum contains:
-		- some amount of stock history
+		- n days of closing price history
+		- time delta
 	- tag contains boolean
 		- delta < 0
 
 DATA SET level 1 - moderate amount of information
 
-	- we're taking a time based risk, almost range trading
+	- we're taking a time based risk, like range trading
 	- datum contains:
 		- 
 # Stonks.py
 
-def investment( stock, date_bought, date_sold, amount_invested ):
+def random_dates():
 
-	- investment function
-	- takes a stock, date_bought, amount_invested, date_sold
+def random_investment( stock, amount_invested ):
+
+	- random_investment function
+	- investments < 30 days, randomized length of time
+	- takes a stock, and amount_invested
 	- returns float of delta
 	- uses yahoo finance api
 	- assumes bought at open price
 	- and sold at close price
-	- example usage; we invest $1,000.00 in Rite Aid on February 1st, 2018,
-	- and sell at market close on Februaru 28th 2018.
-		- delta = investment( "RAD", "2018-02-01", "2018-02-28", 1000 )
+	- example usage; we invest $1,000.00 in Rite Aid on a random date
+		- delta = investment( "RAD", 1000 )
 		- print( "Delta: " + str(round(delta,3)) )
 
 # DATA PROCESSING
