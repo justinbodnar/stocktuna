@@ -18,9 +18,9 @@ DATA SET level 0 - least amount of information
 DATA SET level 1 - moderate amount of information
 
 	- we're taking a time based risk, almost range trading
-	datum contains:
-
-# Stonk.py
+	- datum contains:
+		- 
+# Stonks.py
 
 def investment( stock, date_bought, date_sold, amount_invested ):
 
@@ -30,7 +30,8 @@ def investment( stock, date_bought, date_sold, amount_invested ):
 	- uses yahoo finance api
 	- assumes bought at open price
 	- and sold at close price
-	- example usage; we invest $1,000.00 in Rite Aid on February 1st, 2018, and sell at market close on Februaru 28th 2018.
+	- example usage; we invest $1,000.00 in Rite Aid on February 1st, 2018,
+	- and sell at market close on Februaru 28th 2018.
 		- delta = investment( "RAD", "2018-02-01", "2018-02-28", 1000 )
 		- print( "Delta: " + str(round(delta,3)) )
 
