@@ -27,15 +27,15 @@ DATA SET level 1 - moderate amount of information
 	- we're asking the question:
 	- 'Considering the past n days of price changes, should I invest for x days?'
 	- data point contains:
-                - time delta, in days the shares were held
+		- time delta, in days the shares were held
 		- n days of of open/close data as:
 			- double[2*n] of [ open_1, close_1, open_2, close_2, ...., open_n, close_n ] 
 			- where day_n is the day before date_bought
 	- tag contains:
 		- boolean: delta > 0
-        - ie. Invest $100 into Rite Aid on Christmas, sold for a $5.00 PROFIT 2 days later would create the following data_point and tag
-                - data_point = [ 2, open_1, close_1, open_2, close_2 ]
-                - tag        = [ true ]
+	- ie. Invest $100 into Rite Aid on Christmas, sold for a $5.00 PROFIT 2 days later would create the following data_point and tag
+		- data_point = [ 2, open_1, close_1, open_2, close_2 ]
+		- tag        = [ true ]
 
 DATA SET level 3 - all information available in yahoo finance api
 
