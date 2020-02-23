@@ -49,13 +49,11 @@ def random_dates():
 	m = random.randrange(12)
 
 	# determine how many days are in the random month
-	if m == 0:
-		d = 32
-	elif m == 1:
+	if m == 1:
 		d = 28
 	elif m == 4:
 		d = 29
-	elif m == 6 or m == 7 or m == 11 or m == 2:
+	elif m ==0 or m == 6 or m == 7 or m == 11 or m == 2:
 		d = 31
 	elif m == 3 or m == 5 or m == 8 or m == 9 or m == 10:
 		d = 30
