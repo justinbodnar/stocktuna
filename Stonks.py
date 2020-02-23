@@ -1,5 +1,5 @@
 ####################
-# Stonk.py         #
+# Stonks.py        #
 # by Justin Bodnar #
 ####################
 from datetime import datetime, timedelta
