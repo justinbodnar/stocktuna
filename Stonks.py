@@ -2,13 +2,16 @@
 # Stonk.py         #
 # by Justin Bodnar #
 ####################
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import yfinance as yf
 import random
 import time
 import signal
 import sys
-from datetime import datetime, timedelta
+import tensorflow as tf
+import keras
+import numpy as np
 
 # helper class to suppress random errors
 class DevNull:
@@ -19,7 +22,7 @@ class DevNull:
 sys.stderr = DevNull()
 
 # global stock list
-stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "HEXO", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "S", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
+stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "HEXO", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
 
 
 # n days before function
@@ -28,7 +31,7 @@ stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP"
 def nDaysBefore( n, d ):
 
 	d = datetime.strptime(d[2:],"%y-%m-%d")
-	d = d - timedelta(days=n)
+	d = d - timedelta(days=n-1)
 	d = str(d)[:10]
 
 	# return datestamp
@@ -116,6 +119,10 @@ def random_dates():
 # and sold at close price
 def random_investment( level, n ):
 
+	# initial data_point and tag
+	data_point = []
+	tag = -1
+
 	# amount_invested is arbitrary
 	amount_invested = 100.0
 
@@ -129,9 +136,9 @@ def random_investment( level, n ):
 			# get random stock from global list of stocks t o train on
 			stock = stocks[random.randrange(len(stocks))]
 
-			# start timer
+			# start timer to catch infinite loops in yf class
 			signal.signal(signal.SIGALRM, signal_handler)
-			signal.alarm(1) # in seconds
+			signal.alarm(2) # in seconds
 
 			# get random date
 			date_bought, date_sold = random_dates()
@@ -151,12 +158,13 @@ def random_investment( level, n ):
 			# calculate sold price
 			sold = amount_invested * change
 
-			# calculate delta
+			# calculate tag from delta
 			delta = sold - amount_invested
+			tag = delta > 0
 
 			# get n days of history
-			historyStartDatestamp = nDaysBefore( n, date_bought )
-			history = yf.download(stock,historyStartDatestamp,date_bought)
+			historyStartDatestamp = nDaysBefore( n+1, date_bought )
+			history = yf.download(stock, historyStartDatestamp, nDaysBefore( 1, date_bought ) )
 
 			# build data_point
 			# level 0:
@@ -172,46 +180,69 @@ def random_investment( level, n ):
 			#	- n days of close
 			#	- n days of adjusted close
 			#	- n days of volume
-#			data_point = []
-#			if level == 0:
-				
+			historyRaw = yf.download( stock, historyStartDatestamp, nDaysBefore( 2, date_bought ) )
 
-			# output
-			print( "History starts on", historyStartDatestamp )
-			print( "Purchase happens on", date_bought )
+			# check for invalid history downloads
+			if(len(historyRaw) < n):
+				raise Exception("YF API returned incorrect data")
 
-			# if we made it this far, functions completed
-			complete = True
+			# both level 0 and 1 require the open/close chain structure, so start here
+			if level is 0 or level is 1:
+
+				# creating list of open/close requires casting as iterable list
+				openhistory = []
+				closehistory = []
+				data_point = []
+				for each in historyRaw["Open"]:
+					openhistory += [ each ]
+				for each in historyRaw["Close"]:
+					closehistory += [ each ]
+				for i in range( len(openhistory) ):
+					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
+
+				# output
+#				print( "History starts on", historyStartDatestamp )
+#				print( "Purchase happens on", date_bought )
+
+#				print(historyRaw )
+
+				# if we made it this far, functions completed
+				complete = True
+
+			# if were level 1 we need to add time elta to front of data point
+			if level is 1:
+				print( "Level 1 TBA" )
+			elif level is 2:
+				print( "Level2 TBA" )
 
 		# just disregard errors
 		except Exception as e:
+			print(e)
 			pass
 
 	# return delta
-	return delta
+	return data_point, tag
 
+
+data = []
+tags = []
 # lets get a few random trades and see how we make out
 # each investment will be $100.00
-i = 0
-while i < 3:
-	i += 1
+for i in range(5):
+
 	print( "Iteration", i )
 
 	try:
-		data_point = random_investment( 0, 30 )
-		print( data_point )
+		data_point, tag = random_investment( 0, 3 )
+		data.append( data_point )
+		tags.append( tag )
+		print( "Added another entry" )
 
 	except Exception as e:
 
 		print(e)
-		# do nothing
 		pass
 
-#d = datetime.today() - timedelta(days=3)
-#print("datetime trunc:")
-#d = str(d)[2:10]
-#print(d)
-#d = datetime.strptime(d,"%y-%m-%d")
-#d = d - timedelta(days=3)
-#print("datetime recast:")
-#print(d)
+for i in range( len(data) ):
+	print( data[i] )
+	print( tags[i] )

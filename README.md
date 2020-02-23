@@ -6,6 +6,7 @@ QUESTION: How wo we create a data set to train on historical trends?
 	- create random investments on random days in history
 	- calculate the resulting delta
 	- 1 data point = 1 investment
+	- all floats cast 16 bit via np.float16()
 
 DATA SET level 0 - least amount of information
 
@@ -62,25 +63,34 @@ DATA SET level 2 - all information available in yahoo finance api
 
 # Stonks.py functions defined
 
+def random_investment( level, n ):
+
+	- random_investment function
+	- takes as input an int for data level, and int n number of days of history
+	- returns a single boolean tag, and a 1D data_point list
+	- uses yahoo finance api
+	- assumes bought at open price
+	- and sold at close price
+	- random investment time for monte carlo investment
+	- example usage; we want a level 2 data point focusing on 30 days of stock history
+		- data_point = random_investment( 2, 30 )
+		- print( data_point )
+
 def random_dates():
 
 	- returns two random dates; date_1 and date_2
 	- date_2 is (1-30) days after date_1
 	- format: YYYY-MM-DD
 
-def random_investment( level, n ):
+def nDaysBefore( n, d ):
 
-	- random_investment function
-	- where level denotes which data level to produce data points for
-	- and n is how many days of history to include
-	- investments < 30 days, randomized length of time
-	- returns data point asa a 1D list of doubles
-	- uses yahoo finance api
-	- assumes bought at open price
-	- and sold at close price
-	- example usage; we want a level 2 data point focusing on 30 days of stock history
-		- data_point = random_investment( 2, 30 )
-		- print( data_point )
+	- take as input a time delta n, and a string datestamp d
+	- returns a datestamp string n days before input datestamp
+	- useful for grabbing chunks of stock history
+
+def signal_handler(sgnum, frame):
+
+	- helper function to time out infinite loops in yf class
 
 # DATA PROCESSING
 
