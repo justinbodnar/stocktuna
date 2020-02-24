@@ -5,6 +5,7 @@
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import yfinance as yf
+import pickle
 import random
 import time
 import signal
@@ -22,7 +23,7 @@ class DevNull:
 sys.stderr = DevNull()
 
 # global stock list
-stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "HEXO", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
+stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
 
 
 # n days before function
@@ -108,14 +109,15 @@ def random_dates():
 	return datestamp, datestamp2
 
 # random_investment function
-# takes level, and n
+# takes level, n, and d
 # where level is which data level to produce
-# and n is number of days in history to look at
+# n is number of days in history to look at
+# d is number of days invested
 # returns a datapoint of a 1D list
 # uses yahoo finance api
 # assumes bought at open price
 # and sold at close price
-def random_investment( level, n ):
+def random_investment( level, n, d ):
 
 	# initial data_point and tag
 	data_point = []
@@ -136,12 +138,15 @@ def random_investment( level, n ):
 
 			# start timer to catch infinite loops in yf class
 			signal.signal(signal.SIGALRM, signal_handler)
-			signal.alarm(2) # in seconds
+			signal.alarm(5) # in seconds
 
 			# get random date
 			date_bought, date_sold = random_dates()
 
-			# get the data set from yahoo finace api
+			# make the date_bought n days before date_sold
+			date_bought = nDaysBefore( d, date_sold )
+
+			# get the delta from yahoo finace api
 			data = yf.download( stock, date_bought, date_sold )
 
 			# get opening price
@@ -161,8 +166,15 @@ def random_investment( level, n ):
 			tag = delta > 0
 
 			# get n days of history
-			historyStartDatestamp = nDaysBefore( n+1, date_bought )
+			historyStopDatestamp = nDaysBefore( 2, date_bought)
+			historyStartDatestamp = nDaysBefore( n, date_bought )
 			history = yf.download(stock, historyStartDatestamp, nDaysBefore( 1, date_bought ) )
+
+#			print(history)
+#			print("history starts on", historyStartDatestamp, "and ends on", historyStopDatestamp )
+#			print("for a size of", len(history))
+#			print("purchase made on", date_bought, "for", amount_invested)
+#			print("sold on", date_sold, "for", sold)
 
 			# build data_point
 			# level 0:
@@ -178,34 +190,45 @@ def random_investment( level, n ):
 			#	- n days of close
 			#	- n days of adjusted close
 			#	- n days of volume
-			historyRaw = yf.download( stock, historyStartDatestamp, nDaysBefore( 2, date_bought ) )
+
+			# add extra days of history if YF is being gay
+			sentry = 0
+			while len(history) < n:
+#				print( "Adding more history to current size of", len(history) )
+				sentry = sentry + 1
+				if sentry > 30:
+					raise Exception("YF API is returning crazy small data rn" )
+				historyStartDatestamp = nDaysBefore( sentry, historyStartDatestamp )
+				history = yf.download( stock, historyStartDatestamp, historyStopDatestamp )
 
 			# check for invalid history downloads
-			if(len(historyRaw) < n):
+			if( len(history) < n ):
+#				print( "history:", len(history) )
+#				print( "n:", n )
+#				print( "API RETURNED NOT ENOUGH HISTORY" )
 				raise Exception("YF API returned incorrect data")
 
+
+#			print( "data level:", level )
 			# both level 0 and 1 require the open/close chain structure, so start here
-			if level is 0 or level is 1:
+			level = int(level)
+			if level == 0 or level == 1:
 
 				# creating list of open/close requires casting as iterable list
 				openhistory = []
 				closehistory = []
 				data_point = []
-				for each in historyRaw["Open"]:
-					openhistory += [ each ]
-				for each in historyRaw["Close"]:
-					closehistory += [ each ]
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
 				for i in range( len(openhistory) ):
 					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
 
-				# output
-#				print( "History starts on", historyStartDatestamp )
-#				print( "Purchase happens on", date_bought )
-
-#				print(historyRaw )
-
 				# if we made it this far, functions completed
+#				print( "Completed one datum" )
 				complete = True
+				return data_point, tag
 
 			# if were level 1 we need to add time elta to front of data point
 			if level is 1:
@@ -215,32 +238,100 @@ def random_investment( level, n ):
 
 		# just disregard errors
 		except Exception as e:
-			print(e)
+#			print(e)
 			pass
 
 	# return delta
 	return data_point, tag
 
+# createDataSet function
+# uses random_investment function
+# level number of data level
+# size is the size of dataset
+# n number of days to look at historically before investing
+# d number of days to stay invested
+# and n is number of days in history to look at
+# returns 2 lists: data, tags
+def createDataSet(level, size, n, d):
 
-data = []
-tags = []
-# lets get a few random trades and see how we make out
-# each investment will be $100.00
-for i in range(5):
+	# setup vars
+	data = []
+	tags = []
 
-	print( "Iteration", i )
+	# lets get a few random trades and see how we make out
+	# each investment will be $100.00
+	i = 0
+	while len(data) < size and i < 1000:
 
-	try:
-		data_point, tag = random_investment( 0, 3 )
-		data.append( data_point )
-		tags.append( tag )
-		print( "Added another entry" )
+		print( "[", i+1, "of", size, "]" )
+		i = i + 1
 
-	except Exception as e:
+		try:
+			data_point, tag = random_investment( level, n, d )
+			data.append( data_point )
+			tags.append( tag )
 
-		print(e)
-		pass
+		except Exception as e:
+#			print(e)
+			pass
 
-for i in range( len(data) ):
-	print( data[i] )
-	print( tags[i] )
+	return data, tags
+
+
+###############
+# main method #
+###############
+def main():
+
+	# clear the screen
+	for i in range(30):
+		print()
+
+	# main infinite loop of program
+	choice = 420
+	while choice > 0:
+
+		print( "##########################" )
+		print( "Stonks.py by Justin Bodnar" )
+		print()
+		print( "Can we teach computers to speculate?" )
+		print()
+		print( "Menu" )
+		print( "1. Create new data sets" )
+		print( "2. Analyze current data sets" )
+		choice = int(input( "Enter choice: "))
+
+		# choice == 1
+		if choice == 1:
+
+			# get user parameters
+			filename = input("Data set name: ")
+			level = int(input("Enter data level: "))
+			sizeOfDataset = int(input("Enter size of dataset: "))
+			daysOfHistory = int(input("Enter the number of days to look at: "))
+			daysInvested = int(input("Enter number of days invested: "))
+
+			# create data set
+			data, tags = createDataSet(level, sizeOfDataset, daysOfHistory, daysInvested)
+
+			# pickle data list in datasets dir
+#			with open( "./datasets/"+filename+"_data", "w+" ) as f:
+#				f.dump(data,f)
+			# pickle tag list in datasets dir
+#			with open( "./datasets/"+filename+"_tags", "w+" ) as f:
+#				f.dump(tags,f)
+
+			pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
+			pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
+
+			print( "Dataset save as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
+
+
+		# choice == 2
+		elif choice == 2:
+			print("Choice 2 TBA")
+		# choice != VALID
+		else:
+			print("Invalid choice")
+main()
+

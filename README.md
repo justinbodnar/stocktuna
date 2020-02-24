@@ -63,18 +63,30 @@ DATA SET level 2 - all information available in yahoo finance api
 
 # Stonks.py functions defined
 
-def random_investment( level, n ):
+def createDataSet(level, size, n, d):
 
-	- random_investment function
-	- takes as input an int for data level, and int n number of days of history
-	- returns a single boolean tag, and a 1D data_point list
+	- returns two lists: tags, and data
+	- tags are booleans
+	- data is a single linked list of 16-bit floats
+	- takes as input:
+	- int level: data level to extract
+	- int size: total size of dataset
+	- int n: number of days of history before purchase to look at
+	- int d: number of days before selling the shares
+	- uses random_investment() for each data point and tag
+
+def random_investment( level, n, d ):
+
+	- return a tag, and a datum
+	- tag is a boolean
+	- datum is a linked list of 16-bit floats
+	- takes as input:
+	- int level: data level to extract
+	- int n: number of days of history before purchase
+	- int d: numebr of days before selling the shares
 	- uses yahoo finance api
 	- assumes bought at open price
 	- and sold at close price
-	- random investment time for monte carlo investment
-	- example usage; we want a level 2 data point focusing on 30 days of stock history
-		- data_point = random_investment( 2, 30 )
-		- print( data_point )
 
 def random_dates():
 
