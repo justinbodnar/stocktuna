@@ -58,9 +58,8 @@ print('Test accuracy:', test_acc)
 
 '''
 # save model
-# taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 model_json = model.to_json()
-with open( "models/blackjackmodel.3.json", "w") as json_file:
+with open( "models/model.3.json", "w") as json_file:
 	json_file.write(model_json)
 # serialize weights to HDF5
 model.save_weights("models/blackjackmodel.3.h5")
@@ -68,12 +67,11 @@ print( "Model saved" )
 '''
 '''
 # open serialized model
-# taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
-json_file = open('models/blackjackmodel.2.json', 'r')
+json_file = open('models/model.2.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 model = keras.models.model_from_json( loaded_model_json, custom_objects={"GlorotUniform": tf.keras.initializers.glorot_uniform} )
-model.load_weights( "models/blackjackmodel.2.h5" )
+model.load_weights( "models/model.2.h5" )
 print( "Model loaded from disk" )
 
 print( "testing model" )
