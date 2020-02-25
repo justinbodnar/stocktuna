@@ -13,6 +13,7 @@ import sys
 import tensorflow as tf
 import keras
 import numpy as np
+import os
 
 # helper class to suppress random errors
 class DevNull:
@@ -329,7 +330,16 @@ def main():
 
 		# choice == 2
 		elif choice == 2:
-			print("Choice 2 TBA")
+			print()
+			counter = 0
+			print("\nDatasets available:\n")
+			for file in os.listdir("./datasets"):
+				counter += 1
+				print(file)
+				if counter % 2 == 0:
+					print()
+
+			print()
 		# choice != VALID
 		else:
 			print("Invalid choice")
