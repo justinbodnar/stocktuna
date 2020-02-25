@@ -288,7 +288,7 @@ def main():
 	for i in range(30):
 		print()
 
-	# main infinite loop of program
+	# main program infinite loop
 	choice = 420
 	while choice > 0:
 
@@ -325,23 +325,45 @@ def main():
 			pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
 			pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
 
-			print( "Dataset save as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
+			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
 
+			# wait f or user  input
+			pause = input( "Press enter to continue" )
 
 		# choice == 2
+		# analyze available data sets
 		elif choice == 2:
-			print()
-			counter = 0
-			print("\nDatasets available:\n")
-			for file in os.listdir("./datasets"):
-				counter += 1
-				print(file)
-				if counter % 2 == 0:
-					print()
 
 			print()
+			print("\nDatasets available:")
+
+			# print columns for output
+			print( "\nname - count\n" )
+
+			# list files in datalist dir
+			for file in os.listdir("./datasets"):
+
+				# only look at dataset files
+				if "data" not in file:
+					continue
+
+				# try to unpickle dataset file
+				try:
+					temp = pickle.load( open( "./datasets/"+file, "rb" ) )
+					# print length of dataset
+					print( file, len(temp) )
+
+				# catch exception
+				except Exception as e:
+					# do nothing
+					pass
+
+			print()
+
+			# wait for suer to press enter
+			pause = input( "Press enter to continue." )
 		# choice != VALID
 		else:
-			print("Invalid choice")
+			pause = input("Invalid choice\nPress enter to continue.")
 main()
 
