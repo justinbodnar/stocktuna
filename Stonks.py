@@ -21,7 +21,7 @@ class DevNull:
 		pass
 
 # set stderr to redirect to helper class
-sys.stderr = DevNull()
+#sys.stderr = DevNull()
 
 # global stock list
 stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
@@ -139,7 +139,7 @@ def random_investment( level, n, d ):
 
 			# start timer to catch infinite loops in yf class
 			signal.signal(signal.SIGALRM, signal_handler)
-			signal.alarm(5) # in seconds
+			signal.alarm(15) # in seconds
 
 			# get random date
 			date_bought, date_sold = random_dates()
@@ -171,12 +171,6 @@ def random_investment( level, n, d ):
 			historyStartDatestamp = nDaysBefore( n, date_bought )
 			history = yf.download(stock, historyStartDatestamp, nDaysBefore( 1, date_bought ) )
 
-#			print(history)
-#			print("history starts on", historyStartDatestamp, "and ends on", historyStopDatestamp )
-#			print("for a size of", len(history))
-#			print("purchase made on", date_bought, "for", amount_invested)
-#			print("sold on", date_sold, "for", sold)
-
 			# build data_point
 			# level 0:
 			#	- n days of open/close history
@@ -195,7 +189,6 @@ def random_investment( level, n, d ):
 			# add extra days of history if YF is being gay
 			sentry = 0
 			while len(history) < n:
-#				print( "Adding more history to current size of", len(history) )
 				sentry = sentry + 1
 				if sentry > 30:
 					raise Exception("YF API is returning crazy small data rn" )
@@ -203,14 +196,10 @@ def random_investment( level, n, d ):
 				history = yf.download( stock, historyStartDatestamp, historyStopDatestamp )
 
 			# check for invalid history downloads
-			if( len(history) < n ):
-#				print( "history:", len(history) )
-#				print( "n:", n )
-#				print( "API RETURNED NOT ENOUGH HISTORY" )
-				raise Exception("YF API returned incorrect data")
+#			if( len(history) < n ):
+#				raise Exception("YF API returned incorrect data")
 
 
-#			print( "data level:", level )
 			# both level 0 and 1 require the open/close chain structure, so start here
 			level = int(level)
 			if level == 0 or level == 1:
@@ -227,9 +216,7 @@ def random_investment( level, n, d ):
 					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
 
 				# if we made it this far, functions completed
-#				print( "Completed one datum" )
-				complete = True
-				return data_point, tag
+				return data_point[(-2*n):], tag
 
 			# if were level 1 we need to add time elta to front of data point
 			if level is 1:
@@ -239,11 +226,11 @@ def random_investment( level, n, d ):
 
 		# just disregard errors
 		except Exception as e:
-#			print(e)
+			print(e)
 			pass
 
 	# return delta
-	return data_point, tag
+	return data_point[-n*2:], tag
 
 # createDataSet function
 # uses random_investment function
@@ -264,18 +251,24 @@ def createDataSet(level, size, n, d):
 	i = 0
 	while len(data) < size and i < 1000:
 
+		# print output
 		print( "[", i+1, "of", size, "]" )
 		i = i + 1
 
+		# try to extract a random data point
 		try:
 			data_point, tag = random_investment( level, n, d )
 			data.append( data_point )
 			tags.append( tag )
 
+		# catch exception
 		except Exception as e:
+
+			# do nothing
 #			print(e)
 			pass
 
+	# return the data and tags lists
 	return data, tags
 
 
@@ -288,19 +281,26 @@ def main():
 	for i in range(30):
 		print()
 
+	# print opening header
+	print( "##########################" )
+	print( "Stonks.py by Justin Bodnar" )
+	print()
+	print( "Can we teach computers to speculate?" )
+	print()
+
 	# main program infinite loop
 	choice = 420
 	while choice > 0:
 
-		print( "##########################" )
-		print( "Stonks.py by Justin Bodnar" )
-		print()
-		print( "Can we teach computers to speculate?" )
+		# main menu text
 		print()
 		print( "Menu" )
 		print( "1. Create new data sets" )
-		print( "2. Analyze current data sets" )
-		choice = int(input( "Enter choice: "))
+		print( "2. List and analyze available data sets" )
+		print( "3. Train a model on a data set" )
+
+		# get user chice
+		choice = int(input( "\nEnter choice: "))
 
 		# choice == 1
 		if choice == 1:
@@ -314,13 +314,6 @@ def main():
 
 			# create data set
 			data, tags = createDataSet(level, sizeOfDataset, daysOfHistory, daysInvested)
-
-			# pickle data list in datasets dir
-#			with open( "./datasets/"+filename+"_data", "w+" ) as f:
-#				f.dump(data,f)
-			# pickle tag list in datasets dir
-#			with open( "./datasets/"+filename+"_tags", "w+" ) as f:
-#				f.dump(tags,f)
 
 			pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
 			pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
@@ -356,12 +349,83 @@ def main():
 				# catch exception
 				except Exception as e:
 					# do nothing
+					print(e)
 					pass
 
 			print()
 
-			# wait for suer to press enter
+			# wait for user to press enter
 			pause = input( "Press enter to continue." )
+
+		# choice 3
+		# build model from data set
+		elif choice == 3:
+
+			# try to unpickle data set and train classifier
+			try:
+
+				# get user parameters
+				filename = input("Enter name of dataset: ")
+				print( "Using 3-layer neural network" )
+				epochs = int(input("Enter number of epochs: "))
+				layer1 = int(input("Enter number of nodes for Layer 1: "))
+				layer2 = int(input("Enter number of nodes for Layer 2: "))
+				layer3 = int(input("Enter number of nodes for Layer 3: "))
+
+				# unpickle the data and tags lists
+				tags = pickle.load( open( "./datasets/"+filename+"_tags", "rb" ) )
+				data = pickle.load( open( "./datasets/"+filename+"_data", "rb" ) )
+
+				print("tags initial size:", len(tags))
+				print("data initial size:", len(data))
+
+				size = int( len(data)*(0.75) )
+
+				train_data = np.array( data[1:size] )
+				train_tags = np.array( tags[1:size] )
+				test_data = np.array( data[size:] )
+				test_tags = np.array( tags[size:] )
+
+
+				print("tags training size:", len(train_tags))
+				print("data training size:", len(train_data))
+				print("tags testing size:", len(test_tags))
+				print("data testing size:", len(test_data))
+
+
+				model = keras.Sequential()
+				model.add( keras.layers.Dense( layer1, input_dim=len(data[0]) ) )
+				model.add( keras.layers.Dense( layer2, input_dim=26 ) )
+				model.add( keras.layers.Dense( layer3, input_dim=13 ) )
+				model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
+
+				model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+				model.fit(train_data, train_tags, epochs=epochs)
+
+				test_loss, test_acc = model.evaluate(test_data, test_tags)
+
+				print('Test accuracy:', test_acc)
+
+
+				# save model
+#				model_json = model.to_json()
+#				with open( "models/model.3.json", "w") as json_file:
+#					json_file.write(model_json)
+				# serialize weights to HDF5
+#				model.save_weights("models/blackjackmodel.3.h5")
+#				print( "Model saved" )
+
+
+			# catch exceptions
+			except Exception as e:
+
+				# print error
+				print(e)
+
+			# pause for user input
+			pause = input( "Press enter to continue" )
+
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
