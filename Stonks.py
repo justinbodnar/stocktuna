@@ -9,6 +9,7 @@ import pickle
 import random
 import time
 import signal
+import linecache
 import sys
 import tensorflow as tf
 import keras
@@ -23,11 +24,24 @@ class DevNull:
 # set stderr to redirect to helper class
 #sys.stderr = DevNull()
 
+# PrintException() funct
+# to print a more verbose error message
+def PrintException():
+
+	exc_type, exc_obj, tb = sys.exc_info()
+	f = tb.tb_frame
+	lineno = tb.tb_lineno
+	filename = f.f_code.co_filename
+	linecache.checkcache(filename)
+	line = linecache.getline(filename, lineno, f.f_globals)
+	print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
+
+
 # global stock list
 stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
 
 
-# n days before function
+# nDaysBefore() funct
 # takes as input n, and a datestamp in format YYYY-MMM-DDD
 # returns datestamp n days before
 def nDaysBefore( n, d ):
@@ -39,11 +53,11 @@ def nDaysBefore( n, d ):
 	# return datestamp
 	return d
 
-# signal handler funct
+# signal_handler() funct
 def signal_handler(sgnum, frame):
 	raise Exception("Timed out!")
 
-# random dates function
+# random_dates() funct
 # format: YYYY-MM-DD
 def random_dates():
 
@@ -109,7 +123,7 @@ def random_dates():
 	# return datestamps
 	return datestamp, datestamp2
 
-# random_investment function
+# random_investment() funct
 # takes level, n, and d
 # where level is which data level to produce
 # n is number of days in history to look at
@@ -173,10 +187,9 @@ def random_investment( level, n, d ):
 
 			# build data_point
 			# level 0:
-			#	- n days of open/close history
+			#	- n days of open/close exact history
 			# level 1:
-			#	- time delta
-			#	- n days of open/close history
+			#	- n days of open/close percentage change history
 			# level 2:
 			#	- time delta
 			#	- n days of open
@@ -200,9 +213,9 @@ def random_investment( level, n, d ):
 #				raise Exception("YF API returned incorrect data")
 
 
-			# both level 0 and 1 require the open/close chain structure, so start here
+			# level 0 requires the open/close chain structure, so start here
 			level = int(level)
-			if level == 0 or level == 1:
+			if level == 0:
 
 				# creating list of open/close requires casting as iterable list
 				openhistory = []
@@ -218,21 +231,64 @@ def random_investment( level, n, d ):
 				# if we made it this far, functions completed
 				return data_point[(-2*n):], tag
 
-			# if were level 1 we need to add time elta to front of data point
-			if level is 1:
-				print( "Level 1 TBA" )
+			# if were level 1
+			elif level is 1:
+
+				# prepare lists
+				data_point = []
+				openhistory = []
+				closehistory = []
+
+				# grab each day in history
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
+
+				# start caluclating percentages
+				counter = 0
+				lastclose = 0.0
+				for each in openhistory:
+
+					# cast each datum
+					each = float(each)
+
+					# hack for first element offset in calculating after market hours
+					if counter < 1:
+						counter = 1
+						lastclose = closehistory[0]
+						continue
+
+					# calculate percent change from yesterdays close until todays open
+					# %change = (new-old)*(100/old)
+					change = ( each - lastclose ) * ( 100.0 / lastclose )
+					data_point.append(change)
+					lastclose = float(closehistory[counter])
+
+					# calculate percent change from todays open until todays close
+					# %change = (new-old)*(100/old)
+					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
+					data_point.append( change )
+
+					# increment counter
+					counter += 1
+
+				# if we made it this far, functions completed
+				return data_point[(-2*n):], tag
+
+			# if were level 2
 			elif level is 2:
 				print( "Level2 TBA" )
 
 		# just disregard errors
 		except Exception as e:
-			print(e)
+			PrintException()
 			pass
 
 	# return delta
-	return data_point[-n*2:], tag
+	return data_point[(-n*2)+1:], tag
 
-# createDataSet function
+# createDataSet() funct
 # uses random_investment function
 # level number of data level
 # size is the size of dataset
@@ -258,6 +314,7 @@ def createDataSet(level, size, n, d):
 		# try to extract a random data point
 		try:
 			data_point, tag = random_investment( level, n, d )
+			print( "data_point size:", len(data_point) )
 			data.append( data_point )
 			tags.append( tag )
 
@@ -265,7 +322,7 @@ def createDataSet(level, size, n, d):
 		except Exception as e:
 
 			# do nothing
-#			print(e)
+			PrintException()
 			pass
 
 	# return the data and tags lists
@@ -315,8 +372,13 @@ def main():
 			# create data set
 			data, tags = createDataSet(level, sizeOfDataset, daysOfHistory, daysInvested)
 
-			pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
-			pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
+			# save data sets
+			try:
+				pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
+				pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
+			except Exception as e:
+				print( "error on data or tag save" )
+				PrintException()
 
 			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
 
@@ -349,7 +411,7 @@ def main():
 				# catch exception
 				except Exception as e:
 					# do nothing
-					print(e)
+					PrintException()
 					pass
 
 			print()
@@ -421,7 +483,10 @@ def main():
 			except Exception as e:
 
 				# print error
-				print(e)
+				PrintException()
+
+				# do nothing
+				pass
 
 			# pause for user input
 			pause = input( "Press enter to continue" )

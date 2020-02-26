@@ -26,17 +26,14 @@ DATA SET level 1 - moderate amount of information
 
 	- we're taking a time based risk, like range trading
 	- we're asking the question:
-	- 'Considering the past n days of price changes, should I invest for x days?'
+	- 'Considering the past n days of price percentage changes, should I invest for x days?'
 	- data point contains:
-		- time delta, in days the shares were held
-		- n days of of open/close data as:
-			- double[2*n] of [ open_1, close_1, open_2, close_2, ...., open_n, close_n ] 
-			- where day_n is the day before date_bought
+		- 2 * n days of of open/close percentage change data as:
+			- each day of history produces:
+			- percentage change during trading hours
+			- percentage chade after market hours
 	- tag contains:
 		- boolean: delta > 0
-	- ie. Invest $100 into Rite Aid on Christmas, sold for a $5.00 PROFIT 2 days later would create the following data_point and tag
-		- data_point = [ 2, open_1, close_1, open_2, close_2 ]
-		- tag        = [ true ]
 
 DATA SET level 2 - all information available in yahoo finance api
 
