@@ -404,9 +404,24 @@ def main():
 
 				# try to unpickle dataset file
 				try:
-					temp = pickle.load( open( "./datasets/"+file, "rb" ) )
-					# print length of dataset
-					print( file, len(temp) )
+					# unpickle
+					data_set = pickle.load( open( "./datasets/"+file, "rb" ) )
+					# get length of dim 2
+					min = 99999999
+					max = -1
+					for data_point in data_set:
+						if len(data_point) > max:
+							max = len(data_point)
+						if len(data_point) < min:
+							min = len(data_point)
+					# print output
+					print()
+					print( file )
+					print( "Dim 1:", len(data_set) )
+					if min == max:
+						print( "Dim 2:", min )
+					else:
+						print( "Data set irregular with bounds (", min, ",", max, ")" )
 
 				# catch exception
 				except Exception as e:
