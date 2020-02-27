@@ -314,7 +314,6 @@ def createDataSet(level, size, n, d):
 		# try to extract a random data point
 		try:
 			data_point, tag = random_investment( level, n, d )
-			print( "data_point size:", len(data_point) )
 			data.append( data_point )
 			tags.append( tag )
 
@@ -353,8 +352,9 @@ def main():
 		print()
 		print( "Menu" )
 		print( "1. Create new data sets" )
-		print( "2. List and analyze available data sets" )
-		print( "3. Train a model on a data set" )
+		print( "2. Extend data set" )
+		print( "3. List and analyze available data sets" )
+		print( "4. Train a model on a data set" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -386,9 +386,45 @@ def main():
 			pause = input( "Press enter to continue" )
 
 		# choice == 2
-		# analyze available data sets
+		# extend a data set
 		elif choice == 2:
 
+			# try-catch block
+			try:
+
+				# get user parameters
+				file = input("Data set name: ")
+				level = int(input("Enter data level: "))
+				sizeOfNewDataset = int(input("Enter number of new data points: "))
+				daysOfHistory = int(input("Enter the number of days to look at: "))
+				daysInvested = int(input("Enter number of days invested: "))
+
+				# unpickle lists
+				data = pickle.load( open( "./datasets/"+file+"_data", "rb" ) )
+				tags = pickle.load( open( "./datasets/"+file+"_tags", "rb" ) )
+
+				# get new list
+				newData, newTags = createDataSet(level, sizeOfNewDataset, daysOfHistory, daysInvested)
+
+				# append lists
+				data += newData
+				tags += newTags
+
+				# repickle list
+				pickle.dump( data, open( "./datasets/"+file+"_data", "wb" ) )
+				pickle.dump( tags, open( "./datasets/"+file+"_tags", "wb" ) )
+
+			# catch exceptions
+			except Exceptions as e:
+
+				PrintExceptions()
+				pass
+
+		# choice == 3
+		# analyze available data sets
+		elif choice == 3:
+
+			# print header
 			print()
 			print("\nDatasets available:")
 
@@ -470,9 +506,9 @@ def main():
 			# wait for user to press enter
 			pause = input( "Press enter to continue." )
 
-		# choice 3
+		# choice 4
 		# build model from data set
-		elif choice == 3:
+		elif choice == 4:
 
 			# try to unpickle data set and train classifier
 			try:
