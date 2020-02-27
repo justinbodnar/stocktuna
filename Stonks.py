@@ -278,7 +278,7 @@ def random_investment( level, n, d ):
 
 			# if were level 2
 			elif level is 2:
-				print( "Level2 TBA" )
+				print( "Level 2 TBA" )
 
 		# just disregard errors
 		except Exception as e:
@@ -406,10 +406,15 @@ def main():
 				try:
 					# unpickle
 					data_set = pickle.load( open( "./datasets/"+file, "rb" ) )
+
 					# get length of dim 2
 					min = 99999999
 					max = -1
+
+					# loop through dim 1, checking each entry alonog dim 2 for size
 					for data_point in data_set:
+
+						# check for min or max
 						if len(data_point) > max:
 							max = len(data_point)
 						if len(data_point) < min:
@@ -422,13 +427,44 @@ def main():
 						print( "Dim 2:", min )
 					else:
 						print( "Data set irregular with bounds (", min, ",", max, ")" )
+						print( "Fixing with lower bound", min, "as new dim2 size" )
+
+						# loop through dim 1, creating new dataset of proper dim 2 size
+						regularized_data_set = []
+						for data_point in data_set:
+							regularized_data_set.append( data_point[-min:] )
+
+						# replace the old dataset with the regularized one
+						data_set = regularized_data_set
+
+						# get new stats
+						min = 999999
+						max = -1
+						# for each data_point
+						for data_point in data_set:
+							# check for new min or max
+							if len(data_point) < min:
+								min = len(data_point)
+							if len(data_point) > max:
+								max = len(data_point)
+
+						# print new datset stats
+						if min == max:
+							print( "New dim 2:", min )
+							print( "Repickling. Please rerun this function to confirm updates" )
+							pickle.dump( data_set, open( "./datasets/"+file, "wb" ) )
+						else:
+							print( "Data set STILL irregular with bounds (", min, ",", max, ")" )
+
+						print( "Pickling TBA" )
 
 				# catch exception
 				except Exception as e:
-					# do nothing
+
 					PrintException()
 					pass
 
+			# print newline for pretty output
 			print()
 
 			# wait for user to press enter
