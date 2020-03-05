@@ -22,7 +22,7 @@ class DevNull:
 		pass
 
 # set stderr to redirect to helper class
-#sys.stderr = DevNull()
+sys.stderr = DevNull()
 
 # PrintException() funct
 # to print a more verbose error message
@@ -38,9 +38,13 @@ def PrintException():
 
 
 # global stock list
-stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
+#stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
+stocks = []
+f = open("stonks.txt","r")
+for line in f:
+	stocks.append(line.strip())
 
-
+print(stocks)
 # nDaysBefore() funct
 # takes as input n, and a datestamp in format YYYY-MMM-DDD
 # returns datestamp n days before
@@ -75,7 +79,7 @@ def random_dates():
 		d = 30
 
 	# grab a random year
-	y = random.randrange(2015,2019)
+	y = random.randrange(2009,2019)
 
 	# casting as strings
 	y = str(y)
@@ -150,6 +154,9 @@ def random_investment( level, n, d ):
 
 			# get random stock from global list of stocks t o train on
 			stock = stocks[random.randrange(len(stocks))]
+
+			# output
+			print( "Stock chosen:", stock )
 
 			# start timer to catch infinite loops in yf class
 			signal.signal(signal.SIGALRM, signal_handler)
@@ -282,7 +289,7 @@ def random_investment( level, n, d ):
 
 		# just disregard errors
 		except Exception as e:
-			PrintException()
+#			PrintException()
 			pass
 
 	# return delta
@@ -305,7 +312,7 @@ def createDataSet(level, size, n, d):
 	# lets get a few random trades and see how we make out
 	# each investment will be $100.00
 	i = 0
-	while len(data) < size and i < 1000:
+	while len(data) < size:
 
 		# print output
 		print( "[", i+1, "of", size, "]" )
@@ -321,7 +328,7 @@ def createDataSet(level, size, n, d):
 		except Exception as e:
 
 			# do nothing
-			PrintException()
+#			PrintException()
 			pass
 
 	# return the data and tags lists
@@ -378,7 +385,7 @@ def main():
 				pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
 			except Exception as e:
 				print( "error on data or tag save" )
-				PrintException()
+#				PrintException()
 
 			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
 
@@ -417,7 +424,7 @@ def main():
 			# catch exceptions
 			except Exceptions as e:
 
-				PrintExceptions()
+#				PrintExceptions()
 				pass
 
 		# choice == 3
@@ -497,7 +504,7 @@ def main():
 				# catch exception
 				except Exception as e:
 
-					PrintException()
+#					PrintException()
 					pass
 
 			# print newline for pretty output
@@ -570,7 +577,7 @@ def main():
 			except Exception as e:
 
 				# print error
-				PrintException()
+#				PrintException()
 
 				# do nothing
 				pass
