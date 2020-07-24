@@ -1,6 +1,6 @@
 # PROPOSED DATA SET ARCHITECTURE
 
-QUESTION: How wo we create a data set to train on historical trends?
+QUESTION: How do we create a data set to train on historical trends?
 
 	- using monte carlo simulations
 	- create random investments on random days in history
