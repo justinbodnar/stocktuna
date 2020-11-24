@@ -14,7 +14,7 @@ TAG = [ True ]
 
 Raw data consists of day[0], day[1], day[2]...
 
-On each day there's a percentage change, calculated as [ (day[n]-close[n]) * (100/close[n]) ]
+On each day there's a percentage change, calculated as change[n] = [ (open[n]-close[n]) * (100/close[n]) ]
 
 DATA = [ change[0], change[1], change[2] ... ]
 
