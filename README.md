@@ -16,3 +16,5 @@ python3 Stonks.py
 # MORE INFORMATION
 
 Read ABOUT.md for more information about the code
+
+Read DATA.md for information about how the data is structured

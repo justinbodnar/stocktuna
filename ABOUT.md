@@ -38,14 +38,12 @@ DATA SET level 1 - moderate amount of information
 		- 2 * n days of of open/close percentage change data as:
 			- each day of history produces:
 			- percentage change during trading hours
-			- percentage chade after market hours
+			- percentage change after market hours
 	- tag contains:
 		- boolean: delta > 0
 
 
 Stonks.py Version 2 - use WorldTradeData API
-
-DATA SET level 0 - least amount of information
 
 	- TBA
 
