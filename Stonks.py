@@ -198,22 +198,16 @@ def random_investment( level, n, d ):
 			# level 1:
 			#	- n days of open/close percentage change history
 			# level 2:
-			#	- time delta
-			#	- n days of open
-			#	- n days of high
-			#	- n days of low
-			#	- n days of close
-			#	- n days of adjusted close
-			#	- n days of volume
+			#	- TBA
 
 			# add extra days of history if YF is being gay
-			sentry = 0
-			while len(history) < n:
-				sentry = sentry + 1
-				if sentry > 30:
-					raise Exception("YF API is returning crazy small data rn" )
-				historyStartDatestamp = nDaysBefore( sentry, historyStartDatestamp )
-				history = yf.download( stock, historyStartDatestamp, historyStopDatestamp )
+#			sentry = 0
+#			while len(history) < n:
+#				sentry = sentry + 1
+#				if sentry > 30:
+#					raise Exception("YF API is returning crazy small data rn" )
+#				historyStartDatestamp = nDaysBefore( sentry, historyStartDatestamp )
+#				history = yf.download( stock, historyStartDatestamp, historyStopDatestamp )
 
 			# check for invalid history downloads
 #			if( len(history) < n ):
