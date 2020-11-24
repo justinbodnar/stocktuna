@@ -200,7 +200,7 @@ def random_investment( level, n, d ):
 			# level 2:
 			#	- TBA
 
-			# add extra days of history if YF is being gay
+			# add extra days of history if YF isn't working
 #			sentry = 0
 #			while len(history) < n:
 #				sentry = sentry + 1
