@@ -558,20 +558,24 @@ def main():
 				print('Test accuracy:', test_acc)
 
 
-				# save model
-#				model_json = model.to_json()
-#				with open( "models/model.3.json", "w") as json_file:
-#					json_file.write(model_json)
-				# serialize weights to HDF5
-#				model.save_weights("models/blackjackmodel.3.h5")
-#				print( "Model saved" )
+				print( "Save model? Y or N" )
+				choice = input( "\nEnter choice: ")
+
+				if choice is "Y" or choice is "y":
+					# save model
+					model_json = model.to_json()
+					with open( "models/stonk_model.json", "w") as json_file:
+						json_file.write(model_json)
+					# serialize weights to HDF5
+					model.save_weights("models/stonk_model.h5")
+					print( "Model saved" )
 
 
 			# catch exceptions
 			except Exception as e:
 
 				# print error
-#				PrintException()
+				PrintException()
 
 				# do nothing
 				pass
