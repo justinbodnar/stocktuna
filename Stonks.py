@@ -360,16 +360,16 @@ def main():
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
 
-		# choice == 1
+		# create new data set
 		if choice == 1:
 
 			# get user parameters
-			filename = input("Data set name: ")
+			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			level = int(input("Enter data level: "))
 			sizeOfDataset = int(input("Enter size of dataset: "))
 			daysOfHistory = int(input("Enter the number of days to look at: "))
 			daysInvested = int(input("Enter number of days invested: "))
-
+			filename = str(level)+"-"+str(sizeOfDataset)+"-"+str(daysOfHistory)+"-"+str(daysInvested)
 			# create data set
 			data, tags = createDataSet(level, sizeOfDataset, daysOfHistory, daysInvested)
 
@@ -382,19 +382,24 @@ def main():
 #				PrintException()
 
 			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
-
+			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			# wait f or user  input
 			pause = input( "Press enter to continue" )
 
-		# choice == 2
 		# extend a data set
 		elif choice == 2:
 
 			# try-catch block
 			try:
-
-				# get user parameters
-				file = input("Data set name: ")
+				print( "Available data sets" )
+				# list files in datalist dir
+				for file in os.listdir("./datasets"):
+					# only look at dataset files
+					if "data" not in file:
+						continue
+					else:
+						print( file )
+				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 				level = int(input("Enter data level: "))
 				sizeOfNewDataset = int(input("Enter number of new data points: "))
 				daysOfHistory = int(input("Enter the number of days to look at: "))
@@ -429,9 +434,6 @@ def main():
 			print()
 			print("\nDatasets available:")
 
-			# print columns for output
-			print( "\nname - count\n" )
-
 			# list files in datalist dir
 			for file in os.listdir("./datasets"):
 
@@ -458,7 +460,7 @@ def main():
 							min = len(data_point)
 					# print output
 					print()
-					print( file )
+					print( "Name: ", file )
 					print( "Dim 1:", len(data_set) )
 					if min == max:
 						print( "Dim 2:", min )
@@ -501,6 +503,7 @@ def main():
 #					PrintException()
 					pass
 
+			print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			# print newline for pretty output
 			print()
 
@@ -513,6 +516,15 @@ def main():
 
 			# try to unpickle data set and train classifier
 			try:
+				print( "\nAvailable data sets" )
+				# list files in datalist dir
+				for file in os.listdir("./datasets"):
+					# only look at dataset files
+					if "data" not in file:
+						 continue
+					else:
+						print( file )
+				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]\n" )
 
 				# get user parameters
 				filename = input("Enter name of dataset: ")
