@@ -495,8 +495,6 @@ def main():
 						else:
 							print( "Data set STILL irregular with bounds (", min, ",", max, ")" )
 
-						print( "Pickling TBA" )
-
 				# catch exception
 				except Exception as e:
 
