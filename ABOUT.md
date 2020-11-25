@@ -103,7 +103,7 @@ yf.download( ticker, startdate, enddate )
 		- Adj Close
 		- Volume
 
-	- dates are formatted YYY-MM-DD
+	- dates are formatted YYYY-MM-DD
 
 	- so to grab Rite Aid's month of February 2018 and print the first day's opening price:
 		- data = yf.download('RAD','2018-02-01','2018-02-28')
