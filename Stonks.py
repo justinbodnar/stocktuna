@@ -4,7 +4,7 @@
 ####################
 from datetime import datetime, timedelta, date
 import matplotlib.pyplot as plt
-import yfinance as yf
+from random import *
 import pickle
 import random
 import time
@@ -25,7 +25,7 @@ class DevNull:
 		pass
 
 # set stderr to redirect to helper class
-sys.stderr = DevNull()
+#sys.stderr = DevNull()
 
 # PrintException() funct
 # to print a more verbose error message
@@ -76,103 +76,15 @@ def get_stock_history( stock, level, n ):
 	# initial data_point and tag
 	data_point = []
 
-	# whole thing goes in a while loop until completed
-	complete = False
-	while not complete:
+	# get random stock
+	stocks = os.listdir( "./kaggle_stock_dataset/Stocks/" )
+	stock = random.choice( stocks )
 
-		# try-catch block
-		try:
+	print( stock )
 
-			history = yf.Ticker(stock).history(period=str(n)+"d")
-
-			# get opening price
-			open = float(history["Open"][0])
-
-			# get closing price
-			close = float(history["Close"][len(history)-1])
-
-			# calculate percentage change
-			change = close/open
-
-			# level 0 requires the open/close chain structure, so start here
-			level = int(level)
-			if level == 0:
-
-				# creating list of open/close requires casting as iterable list
-				openhistory = []
-				closehistory = []
-				data_point = []
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-				for i in range( len(openhistory) ):
-					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
-
-				# if we made it this far, functions completed
-				return data_point[(-2*n):]
-
-			# if were level 1
-			elif level is 1:
-
-				# prepare lists
-				data_point = []
-				openhistory = []
-				closehistory = []
-
-				# grab each day in history
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-
-				# start caluclating percentages
-				counter = 0
-				lastclose = 0.0
-				for each in openhistory:
-
-					# cast each datum
-					each = float(each)
-
-					# hack for first element offset in calculating after market hours
-					if counter < 1:
-						counter = 1
-						lastclose = closehistory[0]
-						continue
-
-					# calculate percent change from yesterdays close until todays open
-					# %change = (new-old)*(100/old)
-					change = ( each - lastclose ) * ( 100.0 / lastclose )
-					data_point.append(change)
-					lastclose = float(closehistory[counter])
-
-					# calculate percent change from todays open until todays close
-					# %change = (new-old)*(100/old)
-					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
-					data_point.append( change )
-
-					# increment counter
-					counter += 1
-
-				# if we made it this far, functions completed
-				return data_point[(-2*n):]
-
-			# if were level 2
-			elif level is 2:
-				print( "Level 2 TBA" )
-
-		# print errors
-		except Exception as e:
-			if errors:
-				print
-				print(e)
-				PrintException()
-
-	# return delta
-	return data_point[(-n*2)+1:]
 
 # random_investment() funct
-# takes level, n, and d
+# takes level, n, d, and verbose boolean
 # where level is which data level to produce
 # n is number of days in history to look at
 # d is number of days invested
@@ -180,137 +92,90 @@ def get_stock_history( stock, level, n ):
 # uses yahoo finance api
 # assumes bought at open price
 # and sold at close price
-def random_investment( level, n, d ):
+def random_investment( level, n, d, verbose ):
 
+	# for errors
 	global errors
 
 	# initial data_point and tag
 	data_point = []
 	tag = -1
 
-	# get random date
-	randomdate = random_date()
+	# casting to avoid type errors
+	level = int(level)
+	n = int(n)
+	d = int(d)
 
-	# amount_invested is arbitrary
-	amount_invested = 100.0
+	# pick random stock file
+	stock_files = os.listdir( "./kaggle_stock_dataset/Stocks" )
+	stock_file = stock_files[random.randint(0,len(stock_files))]
 
-	# whole thing goes in a while loop until completed
-	complete = False
-	while not complete:
+	# output
+	if verbose:
+		print( "\nRandom stock file: " + stock_file )
 
-		# try-catch block
-		try:
+	# open stock file and convert to list
+	f = open( "./kaggle_stock_dataset/Stocks/" + stock_file )
+	lines = [line for line in f.readlines()]
 
-			# get random stock from global list of stocks to train on
-			stock = stocks[random.randrange(len(stocks))]
-			print( "stock: " + str(stock) )
+	# data level 0
+	if level == 0:
 
-			# start timer to catch infinite loops in yf class
-			signal.signal(signal.SIGALRM, signal_handler)
-			signal.alarm(15) # in seconds
+		# data level 0 is open[0], close[0], open[1], close[1], ...
 
-			# get the delta from yahoo finace api
-			data = yf.Ticker(stock).history(period=str(d)+"d", end=randomdate)
+		# get total number of days for raw history
+		num_of_days = n + d
 
-			# get opening price
-			open = float(data["Open"][0])
+		# pick random date and calculate the rest
+		start = random.randint(1,len(lines)-num_of_days)
+		investment_date = start + n
+		sold_date = investment_date + d		
 
-			# get closing price
-			close = float(data["Close"][len(data)-1])
+		# grab raw history from txt file
+		raw_history = []
+		for i in range( start, sold_date ):
+			raw_history.append( lines[i].strip() )		
 
-			# calculate percentage change
-			change = close/open
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			processed_history.append( raw_history[i].split(",")[1] )
+			processed_history.append( raw_history[i].split(",")[4] )
 
-			# calculate sold price
-			sold = amount_invested * change
+		# get data tag
+		bought_price = raw_history[n].split(",")[1]
+		sold_price = raw_history[len(raw_history)-1].split(",")[4]
+		tag = sold_price > bought_price
 
-			# calculate tag from delta
-			delta = sold - amount_invested
-			tag = delta > 0
+		# output
+		if verbose:
+			print( "\n" + str(num_of_days) + " days of Raw history" )
+			print( "Date,Open,High,Low,Close,Volume,OpenInt" )
+			for entry in raw_history:
+				print( entry )
+			print( "\n" + str(n) + " days of history to study" )
+			print( "[ open[0], close[0], open[1], close[1], ... ]" )
+			print( processed_history )
+			print( "\nInvestment bought for $" + str(bought_price) )
+			print( "Sold for $" + str(sold_price) )
+			print( "Good investment: " + str(tag) )
 
-			# get n days of history
-			history = yf.Ticker(stock).history(period=str(n)+"d")
+		# return
+		return processed_history, tag
 
-			# level 0 requires the open/close chain structure, so start here
-			level = int(level)
-			if level == 0:
+	# data level 1
+	elif level == 1:
+		print( "Level 1 TBA" )
 
-				# creating list of open/close requires casting as iterable list
-				openhistory = []
-				closehistory = []
-				data_point = []
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-				for i in range( len(openhistory) ):
-					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
+	# data level 2
+	elif level == 2:
+		print( "Level 2 TBA" )
 
-				# if we made it this far, functions completed
-				return data_point[(-2*n):], tag
-
-			# if were level 1
-			elif level is 1:
-
-				# prepare lists
-				data_point = []
-				openhistory = []
-				closehistory = []
-
-				# grab each day in history
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-
-				# start caluclating percentages
-				counter = 0
-				lastclose = 0.0
-				for each in openhistory:
-
-					# cast each datum
-					each = float(each)
-
-					# hack for first element offset in calculating after market hours
-					if counter < 1:
-						counter = 1
-						lastclose = closehistory[0]
-						continue
-
-					# calculate percent change from yesterdays close until todays open
-					# %change = (new-old)*(100/old)
-					change = ( each - lastclose ) * ( 100.0 / lastclose )
-					data_point.append(change)
-					lastclose = float(closehistory[counter])
-
-					# calculate percent change from todays open until todays close
-					# %change = (new-old)*(100/old)
-					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
-					data_point.append( change )
-
-					# increment counter
-					counter += 1
-
-				# if we made it this far, functions completed
-				return data_point[(-2*n):], tag
-
-			# if were level 2
-			elif level is 2:
-				print( "Level 2 TBA" )
-			else:
-				if errors:
-					print( "Invalid data level. Exiting..." )
-				exit()
-
-		# print errors
-		except Exception as e:
-			if errors:
-				print( e )
-				PrintException()
-			pass
-
-	# return delta
-	return data_point[(-n*2)+1:], tag
+	# data level invalid
+	else:
+		if errors:
+			print( "Invalid data level. Exiting..." )
+		exit()
 
 
 # createDataSet() funct
@@ -635,9 +500,7 @@ def main():
 			level = int(input("Enter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
-			datum, tag = random_investment( level, n, d )
-			print( datum )
-			print( "Good investment: " + str(tag) )
+			random_investment( level, n, d, True )
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
