@@ -205,7 +205,7 @@ def createDataSet(level, size, n, d):
 
 		# try to extract a random data point
 		try:
-			data_point, tag = random_investment( level, n, d )
+			data_point, tag = random_investment( level, n, d, False )
 			data.append( data_point )
 			tags.append( tag )
 
@@ -240,8 +240,8 @@ def main():
 
 	# main program infinite loop
 	choice = 420
-	while choice > 0:
-
+	while int(choice) > 0:
+		choice = 0
 		# main menu text
 		print()
 		print( "Menu" )
@@ -301,7 +301,7 @@ def main():
 				sizeOfNewDataset = int(input("Enter number of new data points: "))
 				daysOfHistory = int(input("Enter the number of days to look at: "))
 				daysInvested = int(input("Enter number of days invested: "))
-
+				file = input( "Enter filename (without '_data' or '_tags')" )
 				# unpickle lists
 				data = pickle.load( open( "./datasets/"+file+"_data", "rb" ) )
 				tags = pickle.load( open( "./datasets/"+file+"_tags", "rb" ) )
@@ -318,10 +318,10 @@ def main():
 				pickle.dump( tags, open( "./datasets/"+file+"_tags", "wb" ) )
 
 			# print errors
-			except Exceptions as e:
+			except Exception as e:
 				if errors:
 					print( e )
-					PrintExceptions()
+					PrintException()
 				pass
 
 		# choice == 3
@@ -468,9 +468,9 @@ def main():
 
 
 				print( "Save model? Y or N" )
-				choice = input( "\nEnter choice: ")
+				save_choice = input( "\nEnter choice: ")
 
-				if choice is "Y" or choice is "y":
+				if save_choice is "Y" or save_choice is "y":
 					# save model
 					model_json = model.to_json()
 					with open( "models/stonk_model.json", "w") as json_file:
