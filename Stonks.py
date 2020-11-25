@@ -53,10 +53,6 @@ def signal_handler(sgnum, frame):
 
 # random_date() funct
 # format: YYYY-MM-DD
-def random_date( test ):
-
-	global errors
-
 def random_date():
 	min_year = 2000
 	max_year=datetime.now().year
