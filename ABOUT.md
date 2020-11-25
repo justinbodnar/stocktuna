@@ -62,6 +62,12 @@ def createDataSet(level, size, n, d):
 	- int d: number of days before selling the shares
 	- uses random_investment() for each data point and tag
 
+get_stock_history( stock, level, n ):
+	- returns 1-d array of data
+	- stock is the ticker symbol
+	- 0 level is data level
+	- n is number of days to look at
+
 def random_investment( level, n, d ):
 
 	- return a tag, and a datum
@@ -70,7 +76,7 @@ def random_investment( level, n, d ):
 	- takes as input:
 	- int level: data level to extract
 	- int n: number of days of history before purchase
-	- int d: numebr of days before selling the shares
+	- int d: number of days before selling the shares
 	- uses yahoo finance api
 	- assumes bought at open price
 	- and sold at close price
