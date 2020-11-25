@@ -2,7 +2,7 @@
 # Stonks.py        #
 # by Justin Bodnar #
 ####################
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import matplotlib.pyplot as plt
 import yfinance as yf
 import pickle
@@ -44,7 +44,6 @@ f = open("stonks.txt","r")
 for line in f:
 	stocks.append(line.strip())
 
-print(stocks)
 # nDaysBefore() funct
 # takes as input n, and a datestamp in format YYYY-MMM-DDD
 # returns datestamp n days before
@@ -127,6 +126,115 @@ def random_dates():
 	# return datestamps
 	return datestamp, datestamp2
 
+# get_stock_history() funct
+# takes stock, level, n
+# where stock is the stock to look at
+# level is which data level to produce
+# n is number of days in history to look at
+# returns a datapoint of a 1D list
+# uses yahoo finance api
+def get_stock_history( stock, level, n ):
+
+	print( "get_stock_function called" )
+
+	# initial data_point and tag
+	data_point = []
+
+	# whole thing goes in a while loop until completed
+	complete = False
+	while not complete:
+
+		# try-catch block
+		try:
+
+			history = yf.Ticker(stock).history(period=str(n)+"d")
+
+			# get opening price
+			open = float(history["Open"][0])
+
+			# get closing price
+			close = float(history["Close"][len(history)-1])
+
+			# calculate percentage change
+			change = close/open
+
+			# level 0 requires the open/close chain structure, so start here
+			level = int(level)
+			if level == 0:
+
+				# creating list of open/close requires casting as iterable list
+				openhistory = []
+				closehistory = []
+				data_point = []
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
+				for i in range( len(openhistory) ):
+					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
+
+				# if we made it this far, functions completed
+				return data_point[(-2*n):]
+
+			# if were level 1
+			elif level is 1:
+
+				# prepare lists
+				data_point = []
+				openhistory = []
+				closehistory = []
+
+				# grab each day in history
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
+
+				# start caluclating percentages
+				counter = 0
+				lastclose = 0.0
+				for each in openhistory:
+
+					# cast each datum
+					each = float(each)
+
+					# hack for first element offset in calculating after market hours
+					if counter < 1:
+						counter = 1
+						lastclose = closehistory[0]
+						continue
+
+					# calculate percent change from yesterdays close until todays open
+					# %change = (new-old)*(100/old)
+					change = ( each - lastclose ) * ( 100.0 / lastclose )
+					data_point.append(change)
+					lastclose = float(closehistory[counter])
+
+					# calculate percent change from todays open until todays close
+					# %change = (new-old)*(100/old)
+					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
+					data_point.append( change )
+
+					# increment counter
+					counter += 1
+
+				# if we made it this far, functions completed
+				return data_point[(-2*n):]
+
+			# if were level 2
+			elif level is 2:
+				print( "Level 2 TBA" )
+
+		# just disregard errors
+		except Exception as e:
+			print
+			print(e)
+			PrintException()
+			pass
+
+	# return delta
+	return data_point[(-n*2)+1:]
+
 # random_investment() funct
 # takes level, n, and d
 # where level is which data level to produce
@@ -191,28 +299,6 @@ def random_investment( level, n, d ):
 			historyStopDatestamp = nDaysBefore( 2, date_bought)
 			historyStartDatestamp = nDaysBefore( n, date_bought )
 			history = yf.download(stock, historyStartDatestamp, nDaysBefore( 1, date_bought ) )
-
-			# build data_point
-			# level 0:
-			#	- n days of open/close exact history
-			# level 1:
-			#	- n days of open/close percentage change history
-			# level 2:
-			#	- TBA
-
-			# add extra days of history if YF isn't working
-#			sentry = 0
-#			while len(history) < n:
-#				sentry = sentry + 1
-#				if sentry > 30:
-#					raise Exception("YF API is returning crazy small data rn" )
-#				historyStartDatestamp = nDaysBefore( sentry, historyStartDatestamp )
-#				history = yf.download( stock, historyStartDatestamp, historyStopDatestamp )
-
-			# check for invalid history downloads
-#			if( len(history) < n ):
-#				raise Exception("YF API returned incorrect data")
-
 
 			# level 0 requires the open/close chain structure, so start here
 			level = int(level)
@@ -356,6 +442,7 @@ def main():
 		print( "2. Extend data set" )
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
+		print( "5. Grab and view example datum" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -592,7 +679,13 @@ def main():
 
 			# pause for user input
 			pause = input( "Press enter to continue" )
-
+		# grab and view datum
+		elif choice == 5:
+			level = int(input("Enter data level: "))
+			stock = input("Enter stock to grab: ")
+			n = int(input("Enter number of days to look back at: "))
+			datum = get_stock_history( stock, level, n )
+			print( datum )
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
