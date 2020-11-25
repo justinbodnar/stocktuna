@@ -40,25 +40,10 @@ def PrintException():
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
-
-# global stock list
-#stocks = [ "ACB", "F", "GE", "MSFT", "GPRO", "FIT", "AAPL", "PLUG", "AMD","SNAP", "CRON", "CGC", "TSLA", "FB", "BABA", "CHK", "UBER", "ZNGA", "NIO", "TWTR", "BAC", "AMZN", "T", "APHA", "RAD", "SBUX", "NVDA", "NFLX", "SPCE", "VSLR", "SQ", "KO" ] 
 stocks = []
 f = open("stonks.txt","r")
 for line in f:
 	stocks.append(line.strip())
-
-# nDaysBefore() funct
-# takes as input n, and a datestamp in format YYYY-MMM-DDD
-# returns datestamp n days before
-def nDaysBefore( n, d ):
-
-	d = datetime.strptime(d[2:],"%y-%m-%d")
-	d = d - timedelta(days=n-1)
-	d = str(d)[:10]
-
-	# return datestamp
-	return d
 
 # signal_handler() funct
 def signal_handler(sgnum, frame):
@@ -66,71 +51,20 @@ def signal_handler(sgnum, frame):
 	if errors:
 		raise Exception("Timed out!")
 
-# random_dates() funct
+# random_date() funct
 # format: YYYY-MM-DD
-def random_dates():
+def random_date( test ):
 
-	# grab a random month
-	m = random.randrange(12)
+	global errors
 
-	# determine how many days are in the random month
-	if m == 1:
-		d = 28
-	elif m == 4:
-		d = 29
-	elif m ==0 or m == 6 or m == 7 or m == 11 or m == 2:
-		d = 31
-	elif m == 3 or m == 5 or m == 8 or m == 9 or m == 10:
-		d = 30
-
-	# grab a random year
-	y = random.randrange(2009,2019)
-
-	# casting as strings
-	y = str(y)
-	m += 1
-
-	# padding months
-	if m > 9:
-		m = str(m)
-	else:
-		m = "0" + str(m)
-	if d < 10:
-		d = "0"+str(d)
-	else:
-		d = str(d)
-	datestamp = y+"-"+m+"-"+d
-
-	# start on second date
-	# should be < 30 days per investment
-
-	# inc month
-	if int(m) == 12: # for christmas time investments i guess
-		m = 1
-		y = str( int(y)+1 )
-	else:
-		m = int(m)+1
-
-	# padding month
-	if m < 10:
-		m = "0"+str(m)
-	else:
-		m = str(m)
-
-	# random day
-	d = random.randrange(27)+1
-
-	# padding day
-	if d < 9:
-		d = "0"+str(d)
-	else:
-		d = str(d)
-
-	# concat second datestamp string
-	datestamp2 = y+"-"+m+"-"+d
-
-	# return datestamps
-	return datestamp, datestamp2
+def random_date():
+	min_year = 2000
+	max_year=datetime.now().year
+	# generate a datetime in format yyyy-mm-dd hh:mm:ss.000000
+	start = datetime(min_year, 1, 1, 00, 00, 00)
+	years = max_year - min_year + 1
+	end = start + timedelta(days=365 * years)
+	return str(start + (end - start) * random.random())[:10]
 
 # get_stock_history() funct
 # takes stock, level, n
@@ -237,7 +171,6 @@ def get_stock_history( stock, level, n ):
 				print
 				print(e)
 				PrintException()
-			pass
 
 	# return delta
 	return data_point[(-n*2)+1:]
@@ -259,143 +192,8 @@ def random_investment( level, n, d ):
 	data_point = []
 	tag = -1
 
-	# amount_invested is arbitrary
-	amount_invested = 100.0
-
-	# whole thing goes in a while loop until completed
-	complete = False
-	while not complete:
-
-		# try-catch block
-		try:
-
-			# get random stock from global list of stocks to train on
-			stock = stocks[random.randrange(len(stocks))]
-
-			# output
-			print( "Stock chosen:", stock )
-
-			# start timer to catch infinite loops in yf class
-			signal.signal(signal.SIGALRM, signal_handler)
-			signal.alarm(15) # in seconds
-
-			# get random date
-			date_bought, date_sold = random_dates()
-
-			# make the date_bought n days before date_sold
-			date_bought = nDaysBefore( d, date_sold )
-
-			# get the delta from yahoo finace api
-			data = yf.download( stock, date_bought, date_sold )
-
-			# get opening price
-			open = float(data["Open"][date_bought])
-
-			# get closing price
-			close = float(data["Close"][date_sold])
-
-			# calculate percentage change
-			change = close/open
-
-			# calculate sold price
-			sold = amount_invested * change
-
-			# calculate tag from delta
-			delta = sold - amount_invested
-			tag = delta > 0
-
-			# get n days of history
-			historyStopDatestamp = nDaysBefore( 2, date_bought)
-			historyStartDatestamp = nDaysBefore( n, date_bought )
-			history = yf.download(stock, historyStartDatestamp, nDaysBefore( 1, date_bought ) )
-
-			# level 0 requires the open/close chain structure, so start here
-			level = int(level)
-			if level == 0:
-
-				# creating list of open/close requires casting as iterable list
-				openhistory = []
-				closehistory = []
-				data_point = []
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-				for i in range( len(openhistory) ):
-					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
-
-				# if we made it this far, functions completed
-				return data_point[(-2*n):], tag
-
-			# if were level 1
-			elif level is 1:
-
-				# prepare lists
-				data_point = []
-				openhistory = []
-				closehistory = []
-
-				# grab each day in history
-				for each in history["Open"]:
-					openhistory.append(each)
-				for each in history["Close"]:
-					closehistory.append(each)
-
-				# start caluclating percentages
-				counter = 0
-				lastclose = 0.0
-				for each in openhistory:
-
-					# cast each datum
-					each = float(each)
-
-					# hack for first element offset in calculating after market hours
-					if counter < 1:
-						counter = 1
-						lastclose = closehistory[0]
-						continue
-
-					# calculate percent change from yesterdays close until todays open
-					# %change = (new-old)*(100/old)
-					change = ( each - lastclose ) * ( 100.0 / lastclose )
-					data_point.append(change)
-					lastclose = float(closehistory[counter])
-
-					# calculate percent change from todays open until todays close
-					# %change = (new-old)*(100/old)
-					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
-					data_point.append( change )
-
-					# increment counter
-					counter += 1
-
-				# if we made it this far, functions completed
-				return data_point[(-2*n):], tag
-
-			# if were level 2
-			elif level is 2:
-				print( "Level 2 TBA" )
-
-		# print errors
-		except Exception as e:
-			if errors:
-				print( e )
-				PrintException()
-			pass
-
-	# return delta
-	return data_point[(-n*2)+1:], tag
-
-# random_investment2() funct
-# same as original random_investment() funct
-# with improved functionality
-def random_investment2( level, n, d ):
-
-	global errors
-
-	# initial data_point and tag
-	data_point = []
-	tag = -1
+	# get random date
+	randomdate = random_date()
 
 	# amount_invested is arbitrary
 	amount_invested = 100.0
@@ -409,19 +207,14 @@ def random_investment2( level, n, d ):
 
 			# get random stock from global list of stocks to train on
 			stock = stocks[random.randrange(len(stocks))]
-
-			# output
-			print( "Stock chosen:", stock )
+			print( "stock: " + str(stock) )
 
 			# start timer to catch infinite loops in yf class
 			signal.signal(signal.SIGALRM, signal_handler)
 			signal.alarm(15) # in seconds
 
-			# get random date
-			date_bought, date_sold = random_dates()
-
 			# get the delta from yahoo finace api
-			data = yf.Ticker(stock).history(period=str(d)+"d")
+			data = yf.Ticker(stock).history(period=str(d)+"d", end=randomdate)
 
 			# get opening price
 			open = float(data["Open"][0])
@@ -508,6 +301,10 @@ def random_investment2( level, n, d ):
 			# if were level 2
 			elif level is 2:
 				print( "Level 2 TBA" )
+			else:
+				if errors:
+					print( "Invalid data level. Exiting..." )
+				exit()
 
 		# print errors
 		except Exception as e:
@@ -842,7 +639,7 @@ def main():
 			level = int(input("Enter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
-			datum, tag = random_investment2( level, n, d )
+			datum, tag = random_investment( level, n, d )
 			print( datum )
 			print( "Good investment: " + str(tag) )
 		# choice != VALID

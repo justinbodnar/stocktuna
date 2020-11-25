@@ -82,17 +82,11 @@ def random_investment( level, n, d ):
 	- assumes bought at open price
 	- and sold at close price
 
-def random_dates():
+def random_date():
 
 	- returns two random dates; date_1 and date_2
 	- date_2 is (1-30) days after date_1
 	- format: YYYY-MM-DD
-
-def nDaysBefore( n, d ):
-
-	- take as input a time delta n, and a string datestamp d
-	- returns a datestamp string n days before input datestamp
-	- useful for grabbing chunks of stock history
 
 def signal_handler(sgnum, frame):
 
