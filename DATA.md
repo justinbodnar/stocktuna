@@ -1,3 +1,7 @@
+# DATA SOURCE
+
+Data set can be found at https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
+
 # DATA LEVEL 0
 
 Raw data consists of day[0], day[1], day[2]...
