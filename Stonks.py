@@ -260,7 +260,7 @@ def random_investment( level, n, d ):
 		# try-catch block
 		try:
 
-			# get random stock from global list of stocks t o train on
+			# get random stock from global list of stocks to train on
 			stock = stocks[random.randrange(len(stocks))]
 
 			# output
@@ -374,6 +374,136 @@ def random_investment( level, n, d ):
 
 	# return delta
 	return data_point[(-n*2)+1:], tag
+
+# random_investment2() funct
+# same as original random_investment() funct
+# with improved functionality
+def random_investment( level, n, d ):
+
+	# initial data_point and tag
+	data_point = []
+	tag = -1
+
+	# amount_invested is arbitrary
+	amount_invested = 100.0
+
+	# whole thing goes in a while loop until completed
+	complete = False
+	while not complete:
+
+		# try-catch block
+		try:
+
+			# get random stock from global list of stocks to train on
+			stock = stocks[random.randrange(len(stocks))]
+
+			# output
+			print( "Stock chosen:", stock )
+
+			# start timer to catch infinite loops in yf class
+			signal.signal(signal.SIGALRM, signal_handler)
+			signal.alarm(15) # in seconds
+
+			# get random date
+			date_bought, date_sold = random_dates()
+
+			# get the delta from yahoo finace api
+			data = yf.Ticker(stock).history(period=str(d)+"d")
+
+			# get opening price
+			open = float(data["Open"][0])
+
+			# get closing price
+			close = float(data["Close"][len(data)-1])
+
+			# calculate percentage change
+			change = close/open
+
+			# calculate sold price
+			sold = amount_invested * change
+
+			# calculate tag from delta
+			delta = sold - amount_invested
+			tag = delta > 0
+
+			# get n days of history
+			history = yf.Ticker(stock).history(period=str(n)+"d")
+
+			# level 0 requires the open/close chain structure, so start here
+			level = int(level)
+			if level == 0:
+
+				# creating list of open/close requires casting as iterable list
+				openhistory = []
+				closehistory = []
+				data_point = []
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
+				for i in range( len(openhistory) ):
+					data_point += [ np.float16(round(openhistory[i],2)), np.float(round(closehistory[i],2)) ]
+
+				# if we made it this far, functions completed
+				return data_point[(-2*n):], tag
+
+			# if were level 1
+			elif level is 1:
+
+				# prepare lists
+				data_point = []
+				openhistory = []
+				closehistory = []
+
+				# grab each day in history
+				for each in history["Open"]:
+					openhistory.append(each)
+				for each in history["Close"]:
+					closehistory.append(each)
+
+				# start caluclating percentages
+				counter = 0
+				lastclose = 0.0
+				for each in openhistory:
+
+					# cast each datum
+					each = float(each)
+
+					# hack for first element offset in calculating after market hours
+					if counter < 1:
+						counter = 1
+						lastclose = closehistory[0]
+						continue
+
+					# calculate percent change from yesterdays close until todays open
+					# %change = (new-old)*(100/old)
+					change = ( each - lastclose ) * ( 100.0 / lastclose )
+					data_point.append(change)
+					lastclose = float(closehistory[counter])
+
+					# calculate percent change from todays open until todays close
+					# %change = (new-old)*(100/old)
+					change = ( float(closehistory[counter]) - each ) * ( 100.0 / each )
+					data_point.append( change )
+
+					# increment counter
+					counter += 1
+
+				# if we made it this far, functions completed
+				return data_point[(-2*n):], tag
+
+			# if were level 2
+			elif level is 2:
+				print( "Level 2 TBA" )
+
+		# just disregard errors
+		except Exception as e:
+#			PrintException()
+			pass
+
+	# return delta
+	return data_point[(-n*2)+1:], tag
+
 
 # createDataSet() funct
 # uses random_investment function
