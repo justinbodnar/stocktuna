@@ -16,6 +16,9 @@ import keras
 import numpy as np
 import os
 
+# global var for debugging
+errors = True
+
 # helper class to suppress random errors
 class DevNull:
 	def write(self, msg):
@@ -27,14 +30,15 @@ sys.stderr = DevNull()
 # PrintException() funct
 # to print a more verbose error message
 def PrintException():
-
+	global errors
 	exc_type, exc_obj, tb = sys.exc_info()
 	f = tb.tb_frame
 	lineno = tb.tb_lineno
 	filename = f.f_code.co_filename
 	linecache.checkcache(filename)
 	line = linecache.getline(filename, lineno, f.f_globals)
-	print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
+	if errors:
+		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
 
 # global stock list
@@ -58,7 +62,9 @@ def nDaysBefore( n, d ):
 
 # signal_handler() funct
 def signal_handler(sgnum, frame):
-	raise Exception("Timed out!")
+	global errors
+	if errors:
+		raise Exception("Timed out!")
 
 # random_dates() funct
 # format: YYYY-MM-DD
@@ -135,7 +141,7 @@ def random_dates():
 # uses yahoo finance api
 def get_stock_history( stock, level, n ):
 
-	print( "get_stock_function called" )
+	global errors
 
 	# initial data_point and tag
 	data_point = []
@@ -225,11 +231,12 @@ def get_stock_history( stock, level, n ):
 			elif level is 2:
 				print( "Level 2 TBA" )
 
-		# just disregard errors
+		# print errors
 		except Exception as e:
-			print
-			print(e)
-			PrintException()
+			if errors:
+				print
+				print(e)
+				PrintException()
 			pass
 
 	# return delta
@@ -245,6 +252,8 @@ def get_stock_history( stock, level, n ):
 # assumes bought at open price
 # and sold at close price
 def random_investment( level, n, d ):
+
+	global errors
 
 	# initial data_point and tag
 	data_point = []
@@ -367,9 +376,11 @@ def random_investment( level, n, d ):
 			elif level is 2:
 				print( "Level 2 TBA" )
 
-		# just disregard errors
+		# print errors
 		except Exception as e:
-#			PrintException()
+			if errors:
+				print( e )
+				PrintException()
 			pass
 
 	# return delta
@@ -378,7 +389,9 @@ def random_investment( level, n, d ):
 # random_investment2() funct
 # same as original random_investment() funct
 # with improved functionality
-def random_investment( level, n, d ):
+def random_investment2( level, n, d ):
+
+	global errors
 
 	# initial data_point and tag
 	data_point = []
@@ -496,9 +509,11 @@ def random_investment( level, n, d ):
 			elif level is 2:
 				print( "Level 2 TBA" )
 
-		# just disregard errors
+		# print errors
 		except Exception as e:
-#			PrintException()
+			if errors:
+				print( e )
+				PrintException()
 			pass
 
 	# return delta
@@ -514,6 +529,8 @@ def random_investment( level, n, d ):
 # and n is number of days in history to look at
 # returns 2 lists: data, tags
 def createDataSet(level, size, n, d):
+
+	global errors
 
 	# setup vars
 	data = []
@@ -534,11 +551,11 @@ def createDataSet(level, size, n, d):
 			data.append( data_point )
 			tags.append( tag )
 
-		# catch exception
+		# print errors:
 		except Exception as e:
-
-			# do nothing
-#			PrintException()
+			if errors:
+				print( e )
+				PrintException()
 			pass
 
 	# return the data and tags lists
@@ -549,6 +566,8 @@ def createDataSet(level, size, n, d):
 # main method #
 ###############
 def main():
+
+	global errors
 
 	# clear the screen
 	for i in range(30):
@@ -573,6 +592,7 @@ def main():
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
 		print( "5. Grab and view example datum" )
+		print( "6. View a random data point and tag" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -595,8 +615,10 @@ def main():
 				pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
 				pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
 			except Exception as e:
-				print( "error on data or tag save" )
-#				PrintException()
+				if errors:
+					print( "error on data or tag save" )
+					print( e )
+					PrintException()
 
 			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
 			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
@@ -637,10 +659,11 @@ def main():
 				pickle.dump( data, open( "./datasets/"+file+"_data", "wb" ) )
 				pickle.dump( tags, open( "./datasets/"+file+"_tags", "wb" ) )
 
-			# catch exceptions
+			# print errors
 			except Exceptions as e:
-
-#				PrintExceptions()
+				if errors:
+					print( e )
+					PrintExceptions()
 				pass
 
 		# choice == 3
@@ -712,10 +735,11 @@ def main():
 						else:
 							print( "Data set STILL irregular with bounds (", min, ",", max, ")" )
 
-				# catch exception
+				# print errors
 				except Exception as e:
-
-#					PrintException()
+					if errors:
+						print( e )
+						PrintException()
 					pass
 
 			print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
@@ -798,13 +822,11 @@ def main():
 					print( "Model saved" )
 
 
-			# catch exceptions
+			# print errors
 			except Exception as e:
-
-				# print error
-				PrintException()
-
-				# do nothing
+				if errors:
+					print( e )
+					PrintException()
 				pass
 
 			# pause for user input
@@ -816,6 +838,13 @@ def main():
 			n = int(input("Enter number of days to look back at: "))
 			datum = get_stock_history( stock, level, n )
 			print( datum )
+		elif choice == 6:
+			level = int(input("Enter data level: "))
+			n = int(input("Enter number of days to look at before investing: "))
+			d = int(input("Enter number of days to have been invested: "))
+			datum, tag = random_investment2( level, n, d )
+			print( datum )
+			print( "Good investment: " + str(tag) )
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
