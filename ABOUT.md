@@ -63,6 +63,7 @@ def createDataSet(level, size, n, d):
 	- uses random_investment() for each data point and tag
 
 get_stock_history( stock, level, n ):
+
 	- returns 1-d array of data
 	- stock is the ticker symbol
 	- 0 level is data level
