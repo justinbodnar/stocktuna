@@ -98,7 +98,7 @@ def random_investment( level, n, d, verbose ):
 
 	# initial data_point and tag
 	data_point = []
-	tag = -1
+	tag = 0
 
 	# casting to avoid type errors
 	level = int(level)
@@ -144,7 +144,10 @@ def random_investment( level, n, d, verbose ):
 		# get data tag
 		bought_price = raw_history[n].split(",")[1]
 		sold_price = raw_history[len(raw_history)-1].split(",")[4]
-		tag = sold_price > bought_price
+		if sold_price > bought_price:
+			tag = 1.0
+		else:
+			tag = 0.0
 
 		# output
 		if verbose:
@@ -191,7 +194,10 @@ def random_investment( level, n, d, verbose ):
 		# get data tag
 		bought_price = raw_history[n].split(",")[1]
 		sold_price = raw_history[len(raw_history)-1].split(",")[4]
-		tag = sold_price > bought_price
+		if sold_price > bought_price:
+			tag = 1.0
+		else:
+			tag = 0.0
 
 		# output
 		if verbose:
@@ -251,9 +257,9 @@ def createDataSet(level, size, n, d):
 			i = i + 1
 		# print errors:
 		except Exception as e:
-			if errors:
-				print( e )
-				PrintException()
+#			if errors:
+#				print( e )
+#				PrintException()
 			pass
 
 	# return the data and tags lists
@@ -319,7 +325,7 @@ def main():
 					print( e )
 					PrintException()
 
-			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/", filename+"_data" ) 
+			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
 			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			# wait f or user  input
 			pause = input( "Press enter to continue" )
@@ -477,15 +483,6 @@ def main():
 				tags = pickle.load( open( "./datasets/"+filename+"_tags", "rb" ) )
 				data = pickle.load( open( "./datasets/"+filename+"_data", "rb" ) )
 
-
-
-
-
-
-
-				print( data )
-#				exit()
-
 				print("tags initial size:", len(tags))
 				print("data initial size:", len(data))
 
@@ -545,7 +542,7 @@ def main():
 			pause = input( "Press enter to continue" )
 		# grab and view random datum
 		elif choice == 5:
-			level = int(input("Enter data level: "))
+			level = int(input("\nEnter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
 			random_investment( level, n, d, True )
@@ -558,26 +555,47 @@ def main():
 			for file in os.listdir("./models"):
 				print( file )
 
-			filename = input( "Enter model to use:" )
+			filename = input( "\nEnter model to use:" )
 			model = tf.keras.models.load_model( "./models/"+filename )
 
-			level = int(input("Enter data level: "))
+			level = int(input("\nEnter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = 5 # temp and arbitrary
-			for i in range(10):
+			right = 0
+			wrong = 0
+			i = 0
+			while i < 10000:
 				try:
+					print( "\nTest " + str(i) )
 					data, tag = random_investment( level, n, d, False )
 					data = np.array(data)
 					data = data.reshape(1,n)
-					print( data )
+#					print( data )
 					prediction = model.predict( data )
-					print("\nGood investment?")
-					print("Model:  "+str(prediction))
-					print("Actual: "+str(tag))
-					standby = input( "Press enter for next prediction" )
-				except:
-					pass
+					print("Good investment?")
+					if prediction[0][0] > prediction[0][1]:
+						pred = "Don't invest"
+					else:
+						pred = "Invest"
+					if tag < 1:
+						tag = "Don't invest"
+					else:
+						tag = "Invest"
+					print( "Model:  " + pred )
+					print( "Actual: " + tag )
+					if pred == tag:
+						right += 1
+					else:
+						wrong += 1
+					i += 1
+#					standby = input( "Press enter for next prediction" )
+				except Exception as e:
+#					print( e )
+					continue
 
+
+			print( "\nRight: " + str(right) )
+			print( "Wrong: " + str(wrong) )
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
