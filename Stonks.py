@@ -165,7 +165,50 @@ def random_investment( level, n, d, verbose ):
 
 	# data level 1
 	elif level == 1:
-		print( "Level 1 TBA" )
+
+		# data level 1 is change[0], change[1], ....
+
+		# get total number of days for raw history
+		num_of_days = n + d
+
+		# pick random date and calculate the rest
+		start = random.randint(1,len(lines)-num_of_days)
+		investment_date = start + n
+		sold_date = investment_date + d		
+
+		# grab raw history from txt file
+		raw_history = []
+		for i in range( start, sold_date ):
+			raw_history.append( lines[i].strip() )		
+
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			open_price = float( raw_history[i].split(",")[1] )
+			sell_price = float( raw_history[i].split(",")[4] )
+			change = ( open_price-sell_price ) * ( 100.0 /sell_price )
+			processed_history.append( change )
+
+		# get data tag
+		bought_price = raw_history[n].split(",")[1]
+		sold_price = raw_history[len(raw_history)-1].split(",")[4]
+		tag = sold_price > bought_price
+
+		# output
+		if verbose:
+			print( "\n" + str(num_of_days) + " days of Raw history" )
+			print( "Date,Open,High,Low,Close,Volume,OpenInt" )
+			for entry in raw_history:
+				print( entry )
+			print( "\n" + str(n) + " days of history to study" )
+			print( "[ change[0], change[1], change[2], ... ]" )
+			print( processed_history )
+			print( "\nInvestment bought for $" + str(bought_price) )
+			print( "Sold for $" + str(sold_price) )
+			print( "Good investment: " + str(tag) )
+
+		# return
+		return processed_history, tag
 
 	# data level 2
 	elif level == 2:
@@ -199,16 +242,14 @@ def createDataSet(level, size, n, d):
 	i = 0
 	while len(data) < size:
 
-		# print output
-		print( "[", i+1, "of", size, "]" )
-		i = i + 1
-
 		# try to extract a random data point
 		try:
 			data_point, tag = random_investment( level, n, d, False )
 			data.append( data_point )
 			tags.append( tag )
-
+			# print output
+			print( "[", i+1, "of", size, "]" )
+			i = i + 1
 		# print errors:
 		except Exception as e:
 			if errors:
@@ -278,7 +319,7 @@ def main():
 					print( e )
 					PrintException()
 
-			print( "Dataset saved as ./datasets/", filename+"_tags and ./datasets/", filename+"_data" ) 
+			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/", filename+"_data" ) 
 			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			# wait f or user  input
 			pause = input( "Press enter to continue" )
