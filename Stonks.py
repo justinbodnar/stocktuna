@@ -285,11 +285,13 @@ def main():
 		# main menu text
 		print()
 		print( "Menu" )
+		print( "0. EXIT" )
 		print( "1. Create new data sets" )
 		print( "2. Extend data set" )
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
 		print( "5. View a random data point and tag" )
+		print( "6. Test model via paper-trading" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -334,8 +336,8 @@ def main():
 					if "data" not in file:
 						continue
 					else:
-						print( file )
-				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
+						print( file[0:len(file)-5] )
+				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested" )
 				level = int(input("Enter data level: "))
 				sizeOfNewDataset = int(input("Enter number of new data points: "))
 				daysOfHistory = int(input("Enter the number of days to look at: "))
@@ -459,8 +461,8 @@ def main():
 					if "data" not in file:
 						 continue
 					else:
-						print( file )
-				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]\n" )
+						print( file[0:len(file)-5] )
+				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested\n" )
 
 				# get user parameters
 				filename = input("Enter name of dataset: ")
@@ -470,6 +472,7 @@ def main():
 				layer2 = int(input("Enter number of nodes for Layer 2: "))
 				layer3 = int(input("Enter number of nodes for Layer 3: "))
 
+				model_filename = filename + "_" + str(layer1) + "_" + str(layer2) + "_" + str(layer3)
 				# unpickle the data and tags lists
 				tags = pickle.load( open( "./datasets/"+filename+"_tags", "rb" ) )
 				data = pickle.load( open( "./datasets/"+filename+"_data", "rb" ) )
@@ -505,18 +508,21 @@ def main():
 
 				print('Test accuracy:', test_acc)
 
-
 				print( "Save model? Y or N" )
 				save_choice = input( "\nEnter choice: ")
 
 				if save_choice is "Y" or save_choice is "y":
 					# save model
-					model_json = model.to_json()
-					with open( "models/stonk_model.json", "w") as json_file:
-						json_file.write(model_json)
+					model.save("./models/"+model_filename)
+#					model_json = model.to_json()
+#					with open( "models/"+model_filename+".json", "w") as json_file:
+#						json_file.write(model_json)
 					# serialize weights to HDF5
-					model.save_weights("models/stonk_model.h5")
+#					model.save_weights("models/"+model_filename+".h5")
+
 					print( "Model saved" )
+					print( "Filename: " + model_filename )
+					print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3.[json|h5]\n" )
 
 
 			# print errors
@@ -534,6 +540,18 @@ def main():
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
 			random_investment( level, n, d, True )
+		# paper-trade with model
+		elif choice == 6:
+
+			print("\nModels available:")
+			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3\n" )
+			# list files in datalist dir
+			for file in os.listdir("./models"):
+				print( file )
+
+			filename = input( "Enter model to use:" )
+			model = tf.keras.models.load_model( "./models/"+filename )
+			print( "\nModel loaded. More functionality TBA" )
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
