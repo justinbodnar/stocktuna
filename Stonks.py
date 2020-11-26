@@ -67,8 +67,7 @@ def random_date():
 # where stock is the stock to look at
 # level is which data level to produce
 # n is number of days in history to look at
-# returns a datapoint of a 1D list
-# uses yahoo finance api
+# returns a datapoint of a 1D list, and boolean tag
 def get_stock_history( stock, level, n ):
 
 	global errors
