@@ -290,8 +290,7 @@ def main():
 		print( "2. Extend data set" )
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
-		print( "5. Grab and view example datum" )
-		print( "6. View a random data point and tag" )
+		print( "5. View a random data point and tag" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -530,14 +529,8 @@ def main():
 
 			# pause for user input
 			pause = input( "Press enter to continue" )
-		# grab and view datum
+		# grab and view random datum
 		elif choice == 5:
-			level = int(input("Enter data level: "))
-			stock = input("Enter stock to grab: ")
-			n = int(input("Enter number of days to look back at: "))
-			datum = get_stock_history( stock, level, n )
-			print( datum )
-		elif choice == 6:
 			level = int(input("Enter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
