@@ -291,7 +291,7 @@ def main():
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
 		print( "5. View a random data point and tag" )
-		print( "6. Test model via paper-trading" )
+		print( "6. Watch model make a prediction" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -477,6 +477,15 @@ def main():
 				tags = pickle.load( open( "./datasets/"+filename+"_tags", "rb" ) )
 				data = pickle.load( open( "./datasets/"+filename+"_data", "rb" ) )
 
+
+
+
+
+
+
+				print( data )
+#				exit()
+
 				print("tags initial size:", len(tags))
 				print("data initial size:", len(data))
 
@@ -540,7 +549,7 @@ def main():
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
 			random_investment( level, n, d, True )
-		# paper-trade with model
+		# watch model make a prediction
 		elif choice == 6:
 
 			print("\nModels available:")
@@ -551,7 +560,24 @@ def main():
 
 			filename = input( "Enter model to use:" )
 			model = tf.keras.models.load_model( "./models/"+filename )
-			print( "\nModel loaded. More functionality TBA" )
+
+			level = int(input("Enter data level: "))
+			n = int(input("Enter number of days to look at before investing: "))
+			d = 5 # temp and arbitrary
+			for i in range(10):
+				try:
+					data, tag = random_investment( level, n, d, False )
+					data = np.array(data)
+					data = data.reshape(1,n)
+					print( data )
+					prediction = model.predict( data )
+					print("\nGood investment?")
+					print("Model:  "+str(prediction))
+					print("Actual: "+str(tag))
+					standby = input( "Press enter for next prediction" )
+				except:
+					pass
+
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
