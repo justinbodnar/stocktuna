@@ -76,7 +76,7 @@ def get_stock_history( stock, level, n ):
 	data_point = []
 
 	# get random stock
-	stocks = os.listdir( "./kaggle_stock_dataset/Stocks/" )
+	stocks = os.listdir( "./kaggle_stock_datasets/Stocks/" )
 	stock = random.choice( stocks )
 
 	print( stock )
@@ -106,7 +106,7 @@ def random_investment( level, n, d, verbose ):
 	d = int(d)
 
 	# pick random stock file
-	stock_files = os.listdir( "./kaggle_stock_dataset/Stocks" )
+	stock_files = os.listdir( "./kaggle_stock_datasets/Stocks" )
 	stock_file = stock_files[random.randint(0,len(stock_files))]
 
 	# output
@@ -114,7 +114,7 @@ def random_investment( level, n, d, verbose ):
 		print( "\nRandom stock file: " + stock_file )
 
 	# open stock file and convert to list
-	f = open( "./kaggle_stock_dataset/Stocks/" + stock_file )
+	f = open( "./kaggle_stock_datasets/Stocks/" + stock_file )
 	lines = [line for line in f.readlines()]
 
 	# data level 0
@@ -128,7 +128,7 @@ def random_investment( level, n, d, verbose ):
 		# pick random date and calculate the rest
 		start = random.randint(1,len(lines)-num_of_days)
 		investment_date = start + n
-		sold_date = investment_date + d		
+		sold_date = investment_date + d
 
 		# grab raw history from txt file
 		raw_history = []
@@ -257,9 +257,9 @@ def createDataSet(level, size, n, d):
 			i = i + 1
 		# print errors:
 		except Exception as e:
-#			if errors:
-#				print( e )
-#				PrintException()
+			if errors:
+				print( e )
+				PrintException()
 			pass
 
 	# return the data and tags lists

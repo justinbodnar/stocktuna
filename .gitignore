@@ -1,4 +1,4 @@
 *.cred
-kaggle_stock_datasets/
-models/
-datasets/
+kaggle_stock_datasets/*
+models/*
+datasets/*
