@@ -39,6 +39,42 @@ def PrintException():
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
+# choose_model function
+# lists the models in ./models
+# asks the user to choose
+# returns list containing:
+# string relative filepath
+# int level
+# int size
+# int n
+# int d
+# (returns [-1,-1,-1,-1] if there are no models)
+def choose_model( ):
+		# print header
+		print("\nModels available:")
+		# print headers to make data useful
+		print( "No.	Level	Size	n	d	layer1	layer2	layer3")
+		# create list of files in datalist dir
+		models = []
+		i = 0
+		for file in os.listdir("./models"):
+			# append to list of datasets
+			models.append( "models/"+ file )
+			# print useful information
+			print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3] + "	" + file.split("-")[4] + "	" + file.split("-")[5] + "	" + file.split("-")[6]  ) 
+			i += 1
+
+		# check for empty directory
+		if i < 1:
+			return -1,-1,-1,-1,-1,-1,-1,-1
+
+		# get user input
+		model_choice = int(input("\nEnter number of model: ")) 
+
+		# return relative path
+		model = models[model_choice]
+		return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
+
 # choose_dataset function
 # lists the datasets in ./datasets
 # asks the user to choose
@@ -320,7 +356,7 @@ def main():
 					PrintException()
 
 			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
-			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
+			print( "Filename: level-size-n-d_[data|tags]" )
 			# wait for user  input
 			pause = input( "Press enter to continue" )
 
@@ -466,7 +502,7 @@ def main():
 				layer3 = int(input("Enter number of nodes for Layer 3: "))
 
 				# create model filename
-				model_filename = dataset_filename.split("/")[1] + "_" + str(layer1) + "_" + str(layer2) + "_" + str(layer3)
+				model_filename = dataset_filename.split("/")[1] + "-" + str(layer1) + "-" + str(layer2) + "-" + str(layer3)
 
 				# unpickle the data and tags lists
 				tags = pickle.load( open( dataset_filename+"_tags", "rb" ) )
@@ -513,7 +549,7 @@ def main():
 					# print output
 					print( "Model saved" )
 					print( "Filename: " + model_filename )
-					print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3\n" )
+					print( "Filename: level-size-n-d-epochs-layer1-layer2-layer3\n" )
 
 
 			# print errors
@@ -525,27 +561,29 @@ def main():
 
 			# pause for user input
 			pause = input( "Press enter to continue" )
+
 		# grab and view random datum
 		elif choice == 5:
 			level = int(input("\nEnter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
 			random_investment( level, n, d, True )
+
 		# watch model make a prediction
 		elif choice == 6:
 
-			print("\nModels available:")
-			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3\n" )
-			# list files in datalist dir
-			for file in os.listdir("./models"):
-				print( file )
+			# get model choice
+			model_filename, level, size, n, d, layer1, layer2, layer3 = choose_model()
 
-			filename = input( "\nEnter model to use:" )
-			model = tf.keras.models.load_model( "./models/"+filename )
+			# check for no models
+			if level < 0:
+				standyby = input( "NO MODELS TO LOAD. PRESS ENTER TO CONTINUE" )
+				continue
 
-			level = int(input("\nEnter data level: "))
-			n = int(input("Enter number of days to look at before investing: "))
-			d = 5 # temp and arbitrary
+			# load model
+			model = tf.keras.models.load_model( model_filename )
+
+			# make 10,000 verbose predictions
 			right = 0
 			wrong = 0
 			i = 0
