@@ -5,4 +5,3 @@ keras
 pandas
 yfinance
 matplotlib
-worldtradingdata==0.1.1
