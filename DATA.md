@@ -32,7 +32,9 @@ DATA = [ change[0], change[1], change[2] ... ]
 
 # DATA LEVEL 2
 
-Simple Moving Average TBA
+Simple Moving Average
+
+DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
 
 # DATA LEVEL 3
 

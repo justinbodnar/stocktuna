@@ -202,8 +202,20 @@ def random_investment( level, n, d, verbose ):
 	# data level 2 #
 	################
 	elif level == 2:
-		print( "Level 2 TBA" )
-		exit()
+
+		# output
+		if verbose:
+			print( "data level 2 is SMA200[0], SMA200[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			# calculate SMA200 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-200, j ):
+				summ += float(lines[k].split(",")[2])
+			processed_history.append( summ/200 )
 
 	######################
 	# data level invalid #
