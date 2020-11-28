@@ -17,13 +17,26 @@ Note: A working model was built by iknowfirst.com using a genetic algorithm and 
 
 def choose_dataset( ):
 
-	- lets user valid dataset from ./datasets directory
+	- lets user pick a valid dataset from ./datasets directory
 	- returns:
 	- string relative path
 	- int level
 	- int size
 	- int n
 	- int d
+
+def choose_model( ):
+
+	- lets user pick a valid model from ./models directory
+	- returns:
+	- string relative path
+	- int level
+	- int size
+	- int n
+	- int d
+	- int layer 1 size
+	- int layer 2 size
+	- int layer 3 size
 
 def createDataSet(level, size, n, d):
 
