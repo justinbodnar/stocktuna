@@ -327,8 +327,13 @@ def main():
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
 
+		# EXIT
+		if choice == 0:
+			print( "\nEXITING\n" )
+			exit()
+
 		# create new data set
-		if choice == 1:
+		elif choice == 1:
 
 			# get user parameters
 			level = int(input("Enter data level: "))
