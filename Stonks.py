@@ -370,30 +370,18 @@ def main():
 		# analyze available data sets
 		elif choice == 3:
 
-			# print header
-			print("\nDatasets available:")
-			# print headers to make data useful
-			print( "No.	Level	Size	n	d")
-			# create list of files in datalist dir
-			datasets = []
-			i = 0
-			for file in os.listdir("./datasets"):
-				# only look at dataset files
-				if "data" in file:
-					# append to list of datasets
-					datasets.append( "datasets/"+ file.split("_")[0] )
-					# print useful information
-					print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
-					i += 1
 			# get user input
-			dataset_choice = int(input("\nEnter number of dataset to analyze: ")) 
+			dataset_filename, level, size, n, d = choose_dataset()
 
-			dataset = datasets[dataset_choice]
+			# check for 0 datasets
+			if level < 0:
+				print( "NO DATASETS AVAILABLE. BUILD ONE TO CONTINUE." )
+				continue
 
 			# try to unpickle dataset file
 			try:
 				# unpickle
-				data_set = pickle.load( open( dataset+"_data", "rb" ) )
+				data_set = pickle.load( open( dataset_filename+"_data", "rb" ) )
 
 				# get length of dim 2
 				min = 99999999
@@ -409,7 +397,7 @@ def main():
 						min = len(data_point)
 				# print output
 				print()
-				print( "Name: ", file )
+				print( "Name: ", dataset_filename )
 				print( "Dim 1:", len(data_set), "(size)")
 				if min == max:
 					print( "Dim 2:", min, "(n)" )
