@@ -307,7 +307,7 @@ def main():
 						# print useful information
 						print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
 						i += 1
-				# get user inpt
+				# get user input
 				dataset_no = int(input("\nEnter the number of the dataset to extend: "))
 				size_of_new_dataset = int(input("Enter number of new data points: "))
 
@@ -349,77 +349,85 @@ def main():
 			# print header
 			print()
 			print("\nDatasets available:")
-
-			# list files in datalist dir
+			# print headers to make data useful
+			print( "No.	Level	Size	n	d")
+			# create list of files in datalist dir
+			datasets = []
+			i = 0
 			for file in os.listdir("./datasets"):
-
 				# only look at dataset files
-				if "data" not in file:
-					continue
+				if "data" in file:
+					# append to list of datasets
+					datasets.append( "datasets/"+ file.split("_")[0] )
+					# print useful information
+					print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
+					i += 1
+			# get user input
+			dataset_choice = int(input("\nEnter number of dataset to analyze: ")) 
 
-				# try to unpickle dataset file
-				try:
-					# unpickle
-					data_set = pickle.load( open( "./datasets/"+file, "rb" ) )
+			dataset = datasets[dataset_choice]
 
-					# get length of dim 2
-					min = 99999999
-					max = -1
+			# try to unpickle dataset file
+			try:
+				# unpickle
+				data_set = pickle.load( open( dataset+"_data", "rb" ) )
 
-					# loop through dim 1, checking each entry alonog dim 2 for size
+				# get length of dim 2
+				min = 99999999
+				max = -1
+
+				# loop through dim 1, checking each entry alonog dim 2 for size
+				for data_point in data_set:
+
+					# check for min or max
+					if len(data_point) > max:
+						max = len(data_point)
+					if len(data_point) < min:
+						min = len(data_point)
+				# print output
+				print()
+				print( "Name: ", file )
+				print( "Dim 1:", len(data_set), "(size)")
+				if min == max:
+					print( "Dim 2:", min, "(n)" )
+				else:
+					print( "Data set irregular with bounds (", min, ",", max, ")" )
+					print( "Fixing with lower bound", min, "as new dim2 size" )
+
+					# loop through dim 1, creating new dataset of proper dim 2 size
+					regularized_data_set = []
 					for data_point in data_set:
+						regularized_data_set.append( data_point[-min:] )
 
-						# check for min or max
-						if len(data_point) > max:
-							max = len(data_point)
+					# replace the old dataset with the regularized one
+					data_set = regularized_data_set
+
+					# get new stats
+					min = 999999
+					max = -1
+					# for each data_point
+					for data_point in data_set:
+						# check for new min or max
 						if len(data_point) < min:
 							min = len(data_point)
-					# print output
-					print()
-					print( "Name: ", file )
-					print( "Dim 1:", len(data_set) )
+						if len(data_point) > max:
+							max = len(data_point)
+
+					# print new datset stats
 					if min == max:
-						print( "Dim 2:", min )
+						print( "New dim 2:", min )
+						print( "Repickling. Please rerun this function to confirm updates" )
+						pickle.dump( data_set, open( "./datasets/"+file, "wb" ) )
 					else:
-						print( "Data set irregular with bounds (", min, ",", max, ")" )
-						print( "Fixing with lower bound", min, "as new dim2 size" )
+						print( "Data set STILL irregular with bounds (", min, ",", max, ")" )
 
-						# loop through dim 1, creating new dataset of proper dim 2 size
-						regularized_data_set = []
-						for data_point in data_set:
-							regularized_data_set.append( data_point[-min:] )
+			# print errors
+			except Exception as e:
+				if errors:
+					print( e )
+					PrintException()
+				pass
 
-						# replace the old dataset with the regularized one
-						data_set = regularized_data_set
-
-						# get new stats
-						min = 999999
-						max = -1
-						# for each data_point
-						for data_point in data_set:
-							# check for new min or max
-							if len(data_point) < min:
-								min = len(data_point)
-							if len(data_point) > max:
-								max = len(data_point)
-
-						# print new datset stats
-						if min == max:
-							print( "New dim 2:", min )
-							print( "Repickling. Please rerun this function to confirm updates" )
-							pickle.dump( data_set, open( "./datasets/"+file, "wb" ) )
-						else:
-							print( "Data set STILL irregular with bounds (", min, ",", max, ")" )
-
-				# print errors
-				except Exception as e:
-					if errors:
-						print( e )
-						PrintException()
-					pass
-
-			print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
-			# print newline for pretty output
 			print()
 
 			# wait for user to press enter
