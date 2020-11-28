@@ -178,7 +178,7 @@ def random_investment( level, n, d, verbose ):
 
 	# data level invalid
 	else:
-		if errors:
+		if errors and verbose:
 			print( "Invalid data level. Exiting..." )
 		exit()
 
@@ -293,34 +293,47 @@ def main():
 
 			# try-catch block
 			try:
-				print( "Available data sets" )
-				# list files in datalist dir
+				print( "\nAvailable data sets" )
+				# print ehaders to make data useful
+				print( "No.	Level	Size	n	d")
+				# create list of files in datalist dir
+				datasets = []
+				i = 0
 				for file in os.listdir("./datasets"):
 					# only look at dataset files
-					if "data" not in file:
-						continue
-					else:
-						print( file[0:len(file)-5] )
-				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested" )
-				level = int(input("Enter data level: "))
-				sizeOfNewDataset = int(input("Enter number of new data points: "))
-				daysOfHistory = int(input("Enter the number of days to look at: "))
-				daysInvested = int(input("Enter number of days invested: "))
-				file = input( "Enter filename (without '_data' or '_tags')" )
+					if "data" in file:
+						# append to list of datasets
+						datasets.append( "datasets/"+ file.split("_")[0] )
+						# print useful information
+						print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
+						i += 1
+				# get user inpt
+				dataset_no = int(input("\nEnter the number of the dataset to extend: "))
+				size_of_new_dataset = int(input("Enter number of new data points: "))
+
+				# create new dataset filename from old
+				dataset_filename = datasets[dataset_no]
+				level = dataset_filename.split("-")[0].split("/")[1]
+				new_size = int(dataset_filename.split("-")[1]) + size_of_new_dataset
+				n = dataset_filename.split("-")[2]
+				d = dataset_filename.split("-")[3]
+				new_filename = level + "-" + str(new_size) + "-" + n + "-" + d
+				print( "saving as " + new_filename )
+
 				# unpickle lists
-				data = pickle.load( open( "./datasets/"+file+"_data", "rb" ) )
-				tags = pickle.load( open( "./datasets/"+file+"_tags", "rb" ) )
+				data = pickle.load( open( dataset_filename + "_data", "rb" ) )
+				tags = pickle.load( open( dataset_filename + "_tags", "rb" ) )
 
 				# get new list
-				newData, newTags = createDataSet(level, sizeOfNewDataset, daysOfHistory, daysInvested)
+				newData, newTags = createDataSet(int(level), size_of_new_dataset, int(n), int(d))
 
 				# append lists
 				data += newData
 				tags += newTags
 
 				# repickle list
-				pickle.dump( data, open( "./datasets/"+file+"_data", "wb" ) )
-				pickle.dump( tags, open( "./datasets/"+file+"_tags", "wb" ) )
+				pickle.dump( data, open( "./datasets/"+new_filename+"_data", "wb" ) )
+				pickle.dump( tags, open( "./datasets/"+new_filename+"_tags", "wb" ) )
 
 			# print errors
 			except Exception as e:
