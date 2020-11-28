@@ -18,6 +18,8 @@ import os
 # global var for debugging
 errors = True
 
+########################################
+# DevNull class
 # helper class to suppress random errors
 class DevNull:
 	def write(self, msg):
@@ -26,6 +28,7 @@ class DevNull:
 # set stderr to redirect to helper class
 #sys.stderr = DevNull()
 
+#######################################
 # PrintException() funct
 # to print a more verbose error message
 def PrintException():
@@ -39,6 +42,7 @@ def PrintException():
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
+##############################
 # choose_model function
 # lists the models in ./models
 # asks the user to choose
@@ -75,6 +79,7 @@ def choose_model( ):
 		model = models[model_choice]
 		return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
 
+##################################
 # choose_dataset function
 # lists the datasets in ./datasets
 # asks the user to choose
@@ -112,6 +117,7 @@ def choose_dataset( ):
 		dataset = datasets[dataset_choice]
 		return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
 
+#############################################
 # random_investment() funct
 # takes level, n, d, and verbose boolean
 # where level is which data level to produce
@@ -160,10 +166,14 @@ def random_investment( level, n, d, verbose ):
 	for i in range( start, sold_date ):
 		raw_history.append( lines[i].strip() )	
 
-	# data level 0
+	################
+	# data level 0 #
+	################
 	if level == 0:
 
-		# data level 0 is open[0], close[0], open[1], close[1], ...	
+		# output
+		if verbose:
+			print( "data level 0 is open[0], close[0], open[1], close[1], ..." )
 
 		# create historical dataset
 		processed_history = []
@@ -171,34 +181,14 @@ def random_investment( level, n, d, verbose ):
 			processed_history.append( raw_history[i].split(",")[1] )
 			processed_history.append( raw_history[i].split(",")[4] )
 
-		# get data tag
-		bought_price = raw_history[n].split(",")[1]
-		sold_price = raw_history[len(raw_history)-1].split(",")[4]
-		if sold_price > bought_price:
-			tag = 1.0
-		else:
-			tag = 0.0
+	################
+	# data level 1 #
+	################
+	elif level == 1:
 
 		# output
 		if verbose:
-			print( "\n" + str(num_of_days) + " days of Raw history" )
-			print( "Date,Open,High,Low,Close,Volume,OpenInt" )
-			for entry in raw_history:
-				print( entry )
-			print( "\n" + str(n) + " days of history to study" )
-			print( "[ open[0], close[0], open[1], close[1], ... ]" )
-			print( processed_history )
-			print( "\nInvestment bought for $" + str(bought_price) )
-			print( "Sold for $" + str(sold_price) )
-			print( "Good investment: " + str(tag) )
-
-		# return
-		return processed_history, tag
-
-	# data level 1
-	elif level == 1:
-
-		# data level 1 is change[0], change[1], ....
+			print( "data level 1 is change[0], change[1], ...." )
 
 		# create historical dataset
 		processed_history = []
@@ -208,41 +198,46 @@ def random_investment( level, n, d, verbose ):
 			change = ( open_price-sell_price ) * ( 100.0 /sell_price )
 			processed_history.append( change )
 
-		# get data tag
-		bought_price = raw_history[n].split(",")[1]
-		sold_price = raw_history[len(raw_history)-1].split(",")[4]
-		if sold_price > bought_price:
-			tag = 1.0
-		else:
-			tag = 0.0
-
-		# output
-		if verbose:
-			print( "\n" + str(num_of_days) + " days of Raw history" )
-			print( "Date,Open,High,Low,Close,Volume,OpenInt" )
-			for entry in raw_history:
-				print( entry )
-			print( "\n" + str(n) + " days of history to study" )
-			print( "[ change[0], change[1], change[2], ... ]" )
-			print( processed_history )
-			print( "\nInvestment bought for $" + str(bought_price) )
-			print( "Sold for $" + str(sold_price) )
-			print( "Good investment: " + str(tag) )
-
-		# return
-		return processed_history, tag
-
-	# data level 2
+	################
+	# data level 2 #
+	################
 	elif level == 2:
 		print( "Level 2 TBA" )
+		exit()
 
-	# data level invalid
+	######################
+	# data level invalid #
+	######################
 	else:
+		# output
 		if errors and verbose:
 			print( "Invalid data level. Exiting..." )
 		exit()
 
+	# get data tag
+	bought_price = raw_history[n].split(",")[1]
+	sold_price = raw_history[len(raw_history)-1].split(",")[4]
+	if sold_price > bought_price:
+		tag = 1.0
+	else:
+		tag = 0.0
 
+	# output
+	if verbose:
+		print( "\n" + str(num_of_days) + " days of Raw history" )
+		print( "Date,Open,High,Low,Close,Volume,OpenInt" )
+		for entry in raw_history:
+			print( entry )
+		print( "\n" + str(n) + " days of history to study" )
+		print( processed_history )
+		print( "\nInvestment bought for $" + str(bought_price) )
+		print( "Sold for $" + str(sold_price) )
+		print( "Good investment: " + str(tag) )
+
+	# return
+	return processed_history, tag
+
+###########################################################
 # createDataSet() funct
 # uses random_investment function
 # level number of data level
