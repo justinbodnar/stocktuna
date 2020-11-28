@@ -450,28 +450,27 @@ def main():
 
 			# try to unpickle data set and train classifier
 			try:
-				print( "\nAvailable data sets" )
-				# list files in datalist dir
-				for file in os.listdir("./datasets"):
-					# only look at dataset files
-					if "data" not in file:
-						 continue
-					else:
-						print( file[0:len(file)-5] )
-				print( "\nFilename: level-sizeOfDataset-daysOfHistory-daysInvested\n" )
 
-				# get user parameters
-				filename = input("Enter name of dataset: ")
+				# get user input
+				dataset_filename, level, size, n, d = choose_dataset()
+
+				# check for 0 datasets
+				if level < 0:
+					print( "NO DATASETS AVAILABLE. BUILD ONE TO CONTINUE." )
+					continue
+
 				print( "Using 3-layer neural network" )
 				epochs = int(input("Enter number of epochs: "))
 				layer1 = int(input("Enter number of nodes for Layer 1: "))
 				layer2 = int(input("Enter number of nodes for Layer 2: "))
 				layer3 = int(input("Enter number of nodes for Layer 3: "))
 
-				model_filename = filename + "_" + str(layer1) + "_" + str(layer2) + "_" + str(layer3)
+				# create model filename
+				model_filename = dataset_filename.split("/")[1] + "_" + str(layer1) + "_" + str(layer2) + "_" + str(layer3)
+
 				# unpickle the data and tags lists
-				tags = pickle.load( open( "./datasets/"+filename+"_tags", "rb" ) )
-				data = pickle.load( open( "./datasets/"+filename+"_data", "rb" ) )
+				tags = pickle.load( open( dataset_filename+"_tags", "rb" ) )
+				data = pickle.load( open( dataset_filename+"_data", "rb" ) )
 
 				print("tags initial size:", len(tags))
 				print("data initial size:", len(data))
@@ -510,15 +509,11 @@ def main():
 				if save_choice is "Y" or save_choice is "y":
 					# save model
 					model.save("./models/"+model_filename)
-#					model_json = model.to_json()
-#					with open( "models/"+model_filename+".json", "w") as json_file:
-#						json_file.write(model_json)
-					# serialize weights to HDF5
-#					model.save_weights("models/"+model_filename+".h5")
 
+					# print output
 					print( "Model saved" )
 					print( "Filename: " + model_filename )
-					print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3.[json|h5]\n" )
+					print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_epochs_layer1_layer2_layer3\n" )
 
 
 			# print errors

@@ -15,6 +15,16 @@ Note: A working model was built by iknowfirst.com using a genetic algorithm and 
 
 # Stonks.py functions defined
 
+def choose_dataset( ):
+
+	- lets user valid dataset from ./datasets directory
+	- returns:
+	- string relative path
+	- int level
+	- int size
+	- int n
+	- int d
+
 def createDataSet(level, size, n, d):
 
 	- returns two lists: tags, and data
