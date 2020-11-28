@@ -272,7 +272,6 @@ def random_investment( level, n, d, verbose ):
 			j = start+i
 			summ = 0.0
 			for k in range( j-200, j ):
-				print(lines[k])
 				summ += float(lines[k].split(",")[2])
 			sma10 = summ/10.0
 			todays_price = float(lines[j].split(",")[2])
