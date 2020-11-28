@@ -39,6 +39,43 @@ def PrintException():
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
+# choose_dataset function
+# lists the datasets in ./datasets
+# asks the user to choose
+# returns list containing:
+# string relative filepath
+# int level
+# int size
+# int n
+# int d
+# (returns [-1,-1,-1,-1] if there are no datasets)
+def choose_dataset( ):
+		# print header
+		print("\nDatasets available:")
+		# print headers to make data useful
+		print( "No.	Level	Size	n	d")
+		# create list of files in datalist dir
+		datasets = []
+		i = 0
+		for file in os.listdir("./datasets"):
+			# only look at dataset files
+			if "data" in file:
+				# append to list of datasets
+				datasets.append( "datasets/"+ file.split("_")[0] )
+				# print useful information
+				print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
+				i += 1
+
+		# check for empty directory
+		if i < 1:
+			return -1,-1,-1,-1,-1
+		# get user input
+		dataset_choice = int(input("\nEnter number of dataset: ")) 
+
+		# return relative path
+		dataset = datasets[dataset_choice]
+		return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
+
 # random_investment() funct
 # takes level, n, d, and verbose boolean
 # where level is which data level to produce
@@ -264,7 +301,6 @@ def main():
 		if choice == 1:
 
 			# get user parameters
-			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
 			level = int(input("Enter data level: "))
 			sizeOfDataset = int(input("Enter size of dataset: "))
 			daysOfHistory = int(input("Enter the number of days to look at: "))
@@ -285,7 +321,7 @@ def main():
 
 			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
 			print( "Filename: level-sizeOfDataset-daysOfHistory-daysInvested_[data|tags]" )
-			# wait f or user  input
+			# wait for user  input
 			pause = input( "Press enter to continue" )
 
 		# extend a data set
@@ -293,43 +329,31 @@ def main():
 
 			# try-catch block
 			try:
-				print( "\nAvailable data sets" )
-				# print ehaders to make data useful
-				print( "No.	Level	Size	n	d")
-				# create list of files in datalist dir
-				datasets = []
-				i = 0
-				for file in os.listdir("./datasets"):
-					# only look at dataset files
-					if "data" in file:
-						# append to list of datasets
-						datasets.append( "datasets/"+ file.split("_")[0] )
-						# print useful information
-						print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
-						i += 1
 				# get user input
-				dataset_no = int(input("\nEnter the number of the dataset to extend: "))
-				size_of_new_dataset = int(input("Enter number of new data points: "))
+				dataset_filename, level, size, n, d = choose_dataset()
 
-				# create new dataset filename from old
-				dataset_filename = datasets[dataset_no]
-				level = dataset_filename.split("-")[0].split("/")[1]
-				new_size = int(dataset_filename.split("-")[1]) + size_of_new_dataset
-				n = dataset_filename.split("-")[2]
-				d = dataset_filename.split("-")[3]
-				new_filename = level + "-" + str(new_size) + "-" + n + "-" + d
-				print( "saving as " + new_filename )
+				# check for 0 datasets
+				if level < 0:
+					print( "NO DATASETS AVAILABLE. BUILD ONE TO CONTINUE." )
+					continue
+
+				# get user input
+				number_of_data_to_add = int(input("Enter number of data points to add: "))
+				size_of_new_dataset = number_of_data_to_add + size
 
 				# unpickle lists
 				data = pickle.load( open( dataset_filename + "_data", "rb" ) )
 				tags = pickle.load( open( dataset_filename + "_tags", "rb" ) )
 
 				# get new list
-				newData, newTags = createDataSet(int(level), size_of_new_dataset, int(n), int(d))
+				newData, newTags = createDataSet(int(level), number_of_data_to_add, int(n), int(d))
 
 				# append lists
 				data += newData
 				tags += newTags
+
+				# make new filename
+				new_filename = str(level) + "-" + str(size_of_new_dataset) + "-" + str(n) + "-" + str(d)
 
 				# repickle list
 				pickle.dump( data, open( "./datasets/"+new_filename+"_data", "wb" ) )
@@ -347,7 +371,6 @@ def main():
 		elif choice == 3:
 
 			# print header
-			print()
 			print("\nDatasets available:")
 			# print headers to make data useful
 			print( "No.	Level	Size	n	d")
