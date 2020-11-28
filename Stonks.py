@@ -147,23 +147,23 @@ def random_investment( level, n, d, verbose ):
 	f = open( "./kaggle_stock_datasets/Stocks/" + stock_file )
 	lines = [line for line in f.readlines()]
 
+	# get total number of days for raw history
+	num_of_days = n + d
+
+	# pick random date and calculate the rest
+	start = random.randint(1,len(lines)-num_of_days)
+	investment_date = start + n
+	sold_date = investment_date + d
+
+	# grab raw history from txt file
+	raw_history = []
+	for i in range( start, sold_date ):
+		raw_history.append( lines[i].strip() )	
+
 	# data level 0
 	if level == 0:
 
-		# data level 0 is open[0], close[0], open[1], close[1], ...
-
-		# get total number of days for raw history
-		num_of_days = n + d
-
-		# pick random date and calculate the rest
-		start = random.randint(1,len(lines)-num_of_days)
-		investment_date = start + n
-		sold_date = investment_date + d
-
-		# grab raw history from txt file
-		raw_history = []
-		for i in range( start, sold_date ):
-			raw_history.append( lines[i].strip() )		
+		# data level 0 is open[0], close[0], open[1], close[1], ...	
 
 		# create historical dataset
 		processed_history = []
@@ -199,19 +199,6 @@ def random_investment( level, n, d, verbose ):
 	elif level == 1:
 
 		# data level 1 is change[0], change[1], ....
-
-		# get total number of days for raw history
-		num_of_days = n + d
-
-		# pick random date and calculate the rest
-		start = random.randint(1,len(lines)-num_of_days)
-		investment_date = start + n
-		sold_date = investment_date + d		
-
-		# grab raw history from txt file
-		raw_history = []
-		for i in range( start, sold_date ):
-			raw_history.append( lines[i].strip() )		
 
 		# create historical dataset
 		processed_history = []
@@ -495,6 +482,7 @@ def main():
 					print( "NO DATASETS AVAILABLE. BUILD ONE TO CONTINUE." )
 					continue
 
+				# get user input
 				print( "Using 3-layer neural network" )
 				epochs = int(input("Enter number of epochs: "))
 				layer1 = int(input("Enter number of nodes for Layer 1: "))
@@ -508,37 +496,36 @@ def main():
 				tags = pickle.load( open( dataset_filename+"_tags", "rb" ) )
 				data = pickle.load( open( dataset_filename+"_data", "rb" ) )
 
+				# print output
 				print("tags initial size:", len(tags))
 				print("data initial size:", len(data))
 
+				# split data into training/testing
 				size = int( len(data)*(0.75) )
-
 				train_data = np.array( data[1:size] )
 				train_tags = np.array( tags[1:size] )
 				test_data = np.array( data[size:] )
 				test_tags = np.array( tags[size:] )
 
-
+				# print output
 				print("tags training size:", len(train_tags))
 				print("data training size:", len(train_data))
 				print("tags testing size:", len(test_tags))
 				print("data testing size:", len(test_data))
 
-
+				# train model
 				model = keras.Sequential()
 				model.add( keras.layers.Dense( layer1, input_dim=len(data[0]) ) )
 				model.add( keras.layers.Dense( layer2, input_dim=26 ) )
 				model.add( keras.layers.Dense( layer3, input_dim=13 ) )
 				model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
-
 				model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
-
 				model.fit(train_data, train_tags, epochs=epochs)
 
+				# calculate test loss and est acc
 				test_loss, test_acc = model.evaluate(test_data, test_tags)
 
 				print('Test accuracy:', test_acc)
-
 				print( "Save model? Y or N" )
 				save_choice = input( "\nEnter choice: ")
 
@@ -550,7 +537,6 @@ def main():
 					print( "Model saved" )
 					print( "Filename: " + model_filename )
 					print( "Filename: level-size-n-d-epochs-layer1-layer2-layer3\n" )
-
 
 			# print errors
 			except Exception as e:
@@ -593,7 +579,6 @@ def main():
 					data, tag = random_investment( level, n, d, False )
 					data = np.array(data)
 					data = data.reshape(1,n)
-#					print( data )
 					prediction = model.predict( data )
 					print("Good investment?")
 					if prediction[0][0] > prediction[0][1]:
@@ -612,6 +597,7 @@ def main():
 						wrong += 1
 					i += 1
 #					standby = input( "Press enter for next prediction" )
+				# catch errors
 				except Exception as e:
 #					print( e )
 					continue
@@ -619,6 +605,7 @@ def main():
 
 			print( "\nRight: " + str(right) )
 			print( "Wrong: " + str(wrong) )
+
 		# choice != VALID
 		else:
 			pause = input("Invalid choice\nPress enter to continue.")
