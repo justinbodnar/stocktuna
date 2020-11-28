@@ -47,3 +47,11 @@ DATA = [ SMA50[0], SMA50[1], ..., SMA50[n] ]
 Simple Moving Average 200 is the average of the high prices for the preceding 200 days.
 
 DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
+
+# DATA LEVEL 5
+
+Exponential Moving Average 10 is the smoothing average over the preceding 10 days
+
+equation from https://www.thebalance.com/simple-exponential-and-weighted-moving-averages-1031196
+
+DATA = [ EMA10[0], EMA10[1], ..., EMA10[n] ]
