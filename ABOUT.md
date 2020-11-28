@@ -1,18 +1,6 @@
-# QUICK SETUP
-
-Download the Kaggle data sets from https://www.kaggle.com/tsaustin/us-historical-stock-prices-with-earnings-data
-
-Extract and named the directory "kaggle_stock_datasets", to be placed in get repo.
-
-git clone https://github.com/justinbodnar/artificial-intelligence-in-stock-market-investing.git
-
-pip3 install -r requirements.txt
-
-python3 Stonks.py
-
 # ABSTRACT
 
-QUESTION: How do we create a data set to train on historical trends?
+How do we create a data set to train on historical trends?
 
 	- use monte carlo simulations
 	- create random investments on random days in history
