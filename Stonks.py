@@ -40,47 +40,11 @@ def PrintException():
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
-stocks = []
-f = open("stonks.txt","r")
-for line in f:
-	stocks.append(line.strip())
-
 # signal_handler() funct
 def signal_handler(sgnum, frame):
 	global errors
 	if errors:
 		raise Exception("Timed out!")
-
-# random_date() funct
-# format: YYYY-MM-DD
-def random_date():
-	min_year = 2000
-	max_year=datetime.now().year
-	# generate a datetime in format yyyy-mm-dd hh:mm:ss.000000
-	start = datetime(min_year, 1, 1, 00, 00, 00)
-	years = max_year - min_year + 1
-	end = start + timedelta(days=365 * years)
-	return str(start + (end - start) * random.random())[:10]
-
-# get_stock_history() funct
-# takes stock, level, n
-# where stock is the stock to look at
-# level is which data level to produce
-# n is number of days in history to look at
-# returns a datapoint of a 1D list, and boolean tag
-def get_stock_history( stock, level, n ):
-
-	global errors
-
-	# initial data_point and tag
-	data_point = []
-
-	# get random stock
-	stocks = os.listdir( "./kaggle_stock_datasets/Stocks/" )
-	stock = random.choice( stocks )
-
-	print( stock )
-
 
 # random_investment() funct
 # takes level, n, d, and verbose boolean
@@ -288,6 +252,7 @@ def main():
 	choice = 420
 	while int(choice) > 0:
 		choice = 0
+
 		# main menu text
 		print()
 		print( "Menu" )
