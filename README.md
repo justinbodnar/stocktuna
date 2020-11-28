@@ -4,6 +4,14 @@ git clone https://github.com/justinbodnar/artificial-intelligence-in-stock-marke
 
 pip3 install -r requirements.txt
 
+mkdir models
+
+mkdir datasets
+
+download the Kaggle datasets on your choice in txt form from https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
+
+extract the directory as "kaggle_stock_datasets" in the git repo root directory
+
 python3 Stonks.py
 
 # MENU OPTIONS
