@@ -8,7 +8,6 @@ from random import *
 import pickle
 import random
 import time
-import signal
 import linecache
 import sys
 import tensorflow as tf
@@ -39,12 +38,6 @@ def PrintException():
 	line = linecache.getline(filename, lineno, f.f_globals)
 	if errors:
 		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
-
-# signal_handler() funct
-def signal_handler(sgnum, frame):
-	global errors
-	if errors:
-		raise Exception("Timed out!")
 
 # random_investment() funct
 # takes level, n, d, and verbose boolean

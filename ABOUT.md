@@ -39,10 +39,6 @@ def random_investment( level, n, d ):
 	- assumes bought at open price
 	- and sold at close price
 
-def signal_handler(sgnum, frame):
-
-	- helper function to time out infinite loops in yf class
-
 def PrintException():
 
 	- helper function to print stack trace for debugging
