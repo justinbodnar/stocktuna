@@ -55,3 +55,15 @@ Exponential Moving Average 10 is the smoothing average over the preceding 10 day
 equation from https://www.thebalance.com/simple-exponential-and-weighted-moving-averages-1031196
 
 DATA = [ EMA10[0], EMA10[1], ..., EMA10[n] ]
+
+# DATA LEVEL 6
+
+Exponential Moving Average 50 is the smoothing average over the preceding 50 days
+
+DATA = [ EMA50[0], EMA50[1], ..., EMA50[n] ]
+
+# DATA LEVEL 7
+
+Exponential Moving Average 10 is the smoothing average over the preceding 200 days
+
+DATA = [ EMA200[0], EMA200[1], ..., EMA200[n] ]

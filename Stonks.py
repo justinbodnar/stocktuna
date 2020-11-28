@@ -271,6 +271,56 @@ def random_investment( level, n, d, verbose ):
 			# calculate SMA10 for this day
 			j = start+i
 			summ = 0.0
+			for k in range( j-10, j ):
+				summ += float(lines[k].split(",")[2])
+			sma10 = summ/10.0
+			todays_price = float(lines[j].split(",")[2])
+			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
+			last_ema10 = ema10
+			processed_history.append( ema10 )
+
+	################
+	# data level 6 #
+	################
+	elif level == 6:
+
+		# output
+		if verbose:
+			print( "data level 6 is EMA50[0], EMA50[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		last_ema10 = float(lines[start-1].split(",")[2])
+		k_constant = 2.0 / ( float(n) + 1.0 )
+		for i in range( 0, n ):
+			# calculate SMA50 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-50, j ):
+				summ += float(lines[k].split(",")[2])
+			sma10 = summ/10.0
+			todays_price = float(lines[j].split(",")[2])
+			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
+			last_ema10 = ema10
+			processed_history.append( ema10 )
+
+	################
+	# data level 7 #
+	################
+	elif level == 7:
+
+		# output
+		if verbose:
+			print( "data level 5 is EMA200[0], EMA200[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		last_ema10 = float(lines[start-1].split(",")[2])
+		k_constant = 2.0 / ( float(n) + 1.0 )
+		for i in range( 0, n ):
+			# calculate SMA200 for this day
+			j = start+i
+			summ = 0.0
 			for k in range( j-200, j ):
 				summ += float(lines[k].split(",")[2])
 			sma10 = summ/10.0
