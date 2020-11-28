@@ -197,7 +197,6 @@ def random_investment( level, n, d, verbose ):
 			sell_price = float( raw_history[i].split(",")[4] )
 			change = ( open_price-sell_price ) * ( 100.0 /sell_price )
 			processed_history.append( change )
-
 	################
 	# data level 2 #
 	################
@@ -205,26 +204,7 @@ def random_investment( level, n, d, verbose ):
 
 		# output
 		if verbose:
-			print( "data level 2 is SMA200[0], SMA200[1], ...." )
-
-		# create historical dataset
-		processed_history = []
-		for i in range( 0, n ):
-			# calculate SMA200 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-200, j ):
-				summ += float(lines[k].split(",")[2])
-			processed_history.append( summ/200 )
-
-	################
-	# data level 3 #
-	################
-	elif level == 3:
-
-		# output
-		if verbose:
-			print( "data level 3 is SMA10[0], SMA10[1], ...." )
+			print( "data level 2 is SMA10[0], SMA10[1], ...." )
 
 		# create historical dataset
 		processed_history = []
@@ -235,6 +215,44 @@ def random_investment( level, n, d, verbose ):
 			for k in range( j-10, j ):
 				summ += float(lines[k].split(",")[2])
 			processed_history.append( summ/10 )
+
+	################
+	# data level 3 #
+	################
+	elif level == 3:
+
+		# output
+		if verbose:
+			print( "data level 3 is SMA50[0], SMA50[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			# calculate SMA50 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-50, j ):
+				summ += float(lines[k].split(",")[2])
+			processed_history.append( summ/50 )
+
+	################
+	# data level 4 #
+	################
+	elif level == 4:
+
+		# output
+		if verbose:
+			print( "data level 4 is SMA200[0], SMA200[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			# calculate SMA200 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-200, j ):
+				summ += float(lines[k].split(",")[2])
+			processed_history.append( summ/200 )
 
 	######################
 	# data level invalid #

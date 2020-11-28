@@ -32,12 +32,18 @@ DATA = [ change[0], change[1], change[2] ... ]
 
 # DATA LEVEL 2
 
-Simple Moving Average 200 is the average of the high prices for the preceding 200 days.
-
-DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
-
-# DATA LEVEL 3
-
 Simple Moving Average 10 is the average of the high prices for the preceding 10 days.
 
 DATA = [ SMA10[0], SMA10[1], ..., SMA10[n] ]
+
+# DATA LEVEL 3
+
+Simple Moving Average 50 is the average of the high prices for the preceding 50 days.
+
+DATA = [ SMA50[0], SMA50[1], ..., SMA50[n] ]
+
+# DATA LEVEL 4
+
+Simple Moving Average 200 is the average of the high prices for the preceding 200 days.
+
+DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
