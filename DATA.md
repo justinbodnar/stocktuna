@@ -32,7 +32,7 @@ DATA = [ change[0], change[1], change[2] ... ]
 
 # DATA LEVEL 2
 
-Simple Moving Average
+Simple Moving Average 200 is the average of the high prices for the preceding 200 days.
 
 DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
 
