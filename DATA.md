@@ -38,4 +38,6 @@ DATA = [ SMA200[0], SMA200[1], ..., SMA200[n] ]
 
 # DATA LEVEL 3
 
-Exponential Moving Average TBA
+Simple Moving Average 10 is the average of the high prices for the preceding 10 days.
+
+DATA = [ SMA10[0], SMA10[1], ..., SMA10[n] ]

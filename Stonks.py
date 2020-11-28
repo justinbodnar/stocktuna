@@ -217,6 +217,25 @@ def random_investment( level, n, d, verbose ):
 				summ += float(lines[k].split(",")[2])
 			processed_history.append( summ/200 )
 
+	################
+	# data level 3 #
+	################
+	elif level == 3:
+
+		# output
+		if verbose:
+			print( "data level 3 is SMA10[0], SMA10[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		for i in range( 0, n ):
+			# calculate SMA10 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-10, j ):
+				summ += float(lines[k].split(",")[2])
+			processed_history.append( summ/10 )
+
 	######################
 	# data level invalid #
 	######################
