@@ -3,5 +3,4 @@ tensorflow
 numpy
 keras
 pandas
-yfinance
 matplotlib
