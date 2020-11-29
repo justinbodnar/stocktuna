@@ -64,6 +64,6 @@ DATA = [ EMA50[0], EMA50[1], ..., EMA50[n] ]
 
 # DATA LEVEL 7
 
-Exponential Moving Average 10 is the smoothing average over the preceding 200 days
+Exponential Moving Average 200 is the smoothing average over the preceding 200 days
 
 DATA = [ EMA200[0], EMA200[1], ..., EMA200[n] ]
