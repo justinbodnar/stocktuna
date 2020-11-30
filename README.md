@@ -2,6 +2,8 @@
 
 git clone https://github.com/justinbodnar/artificial-intelligence-in-stock-market-investing.git
 
+cd stonks-ai
+
 pip3 install -r requirements.txt
 
 mkdir models
