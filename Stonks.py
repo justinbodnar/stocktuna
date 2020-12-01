@@ -265,15 +265,15 @@ def random_investment( level, n, d, verbose ):
 
 		# create historical dataset
 		processed_history = []
-		last_ema10 = float(lines[start-1].split(",")[2])
+		last_ema10 = float(lines[start-10].split(",")[2])
 		k_constant = 2.0 / ( float(n) + 1.0 )
 		for i in range( 0, n ):
-			# calculate SMA10 for this day
+			# calculate EMA10 for this day
 			j = start+i
 			summ = 0.0
 			for k in range( j-10, j ):
 				summ += float(lines[k].split(",")[2])
-			sma10 = summ/10.0
+			ema10 = summ/10.0
 			todays_price = float(lines[j].split(",")[2])
 			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
 			last_ema10 = ema10
@@ -290,19 +290,19 @@ def random_investment( level, n, d, verbose ):
 
 		# create historical dataset
 		processed_history = []
-		last_ema10 = float(lines[start-1].split(",")[2])
+		last_ema50 = float(lines[start-50].split(",")[2])
 		k_constant = 2.0 / ( float(n) + 1.0 )
 		for i in range( 0, n ):
-			# calculate SMA50 for this day
+			# calculate EMA50 for this day
 			j = start+i
 			summ = 0.0
 			for k in range( j-50, j ):
 				summ += float(lines[k].split(",")[2])
-			sma10 = summ/10.0
+			ema10 = summ/50.0
 			todays_price = float(lines[j].split(",")[2])
-			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
-			last_ema10 = ema10
-			processed_history.append( ema10 )
+			ema50 = (todays_price-last_ema50) * k_constant + last_ema50
+			last_ema50 = ema50
+			processed_history.append( ema50 )
 
 	################
 	# data level 7 #
@@ -311,23 +311,59 @@ def random_investment( level, n, d, verbose ):
 
 		# output
 		if verbose:
-			print( "data level 5 is EMA200[0], EMA200[1], ...." )
+			print( "data level 7 is EMA200[0], EMA200[1], ...." )
 
 		# create historical dataset
 		processed_history = []
-		last_ema10 = float(lines[start-1].split(",")[2])
+		last_ema200 = float(lines[start-200].split(",")[2])
 		k_constant = 2.0 / ( float(n) + 1.0 )
 		for i in range( 0, n ):
-			# calculate SMA200 for this day
+			# calculate EMA200 for this day
 			j = start+i
 			summ = 0.0
 			for k in range( j-200, j ):
 				summ += float(lines[k].split(",")[2])
-			sma10 = summ/10.0
+			ema200 = summ/200.0
 			todays_price = float(lines[j].split(",")[2])
-			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
-			last_ema10 = ema10
-			processed_history.append( ema10 )
+			ema200 = (todays_price-last_ema200) * k_constant + last_ema200
+			last_ema200 = ema200
+			processed_history.append( ema200 )
+
+	################
+	# data level 8 #
+	################
+	elif level == 8:
+
+		# output
+		if verbose:
+			print( "data level 8 is MACD(12,26)[0], MACD(12,26)[1], ...." )
+
+		# create historical dataset
+		processed_history = []
+		last_ema26 = float(lines[start-26].split(",")[2])
+		last_ema12 = float(lines[start-12].split(",")[2])
+		k_constant = 2.0 / ( float(n) + 1.0 )
+		for i in range( 0, n ):
+			# calculate EMA26 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-26, j ):
+				summ += float(lines[k].split(",")[2])
+			ema26 = summ/26.0
+			todays_price = float(lines[j].split(",")[2])
+			ema26 = (todays_price-last_ema26) * k_constant + last_ema26
+			last_ema26 = ema26
+			# calculate EMA12 for this day
+			j = start+i
+			summ = 0.0
+			for k in range( j-12, j ):
+				summ += float(lines[k].split(",")[2])
+			ema12 = summ/12.0
+			todays_price = float(lines[j].split(",")[2])
+			ema12 = (todays_price-last_ema12) * k_constant + last_ema12
+			last_ema12 = ema12
+			# finally, append
+			processed_history.append( ema26-ema12 )
 
 	######################
 	# data level invalid #

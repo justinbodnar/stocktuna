@@ -67,3 +67,11 @@ DATA = [ EMA50[0], EMA50[1], ..., EMA50[n] ]
 Exponential Moving Average 200 is the smoothing average over the preceding 200 days
 
 DATA = [ EMA200[0], EMA200[1], ..., EMA200[n] ]
+
+# DATA LEVEL 8
+
+Moving Average Convergance Divergance (MACD) is.... just Google it. The equation used is: 
+
+MACD[n] = EMA26[n] - EMA12[n]
+
+DATA = [ MACD[0], MACD[1], ... ]
