@@ -1,6 +1,6 @@
 # QUICK START
 
-git clone https://github.com/justinbodnar/artificial-intelligence-in-stock-market-investing.git
+git clone https://github.com/justinbodnar/stonks-ai.git
 
 cd stonks-ai
 
