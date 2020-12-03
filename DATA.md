@@ -6,7 +6,9 @@ Data set can be found at https://www.kaggle.com/borismarjanovic/price-volume-dat
 
 Raw data consists of day[0], day[1], day[2], ..., day[inf]
 
-Each day contains information about that day of the stock. ie. open price, close price, volume, etc.
+Each day contains information about that day is the candlestick, plus volume, and openInt.
+
+ie. open price, close price, high, low, volume, openInt.
 
 Processed data consists of information over n days.
 
