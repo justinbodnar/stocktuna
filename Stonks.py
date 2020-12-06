@@ -3,8 +3,10 @@
 # by Justin Bodnar #
 ####################
 from datetime import datetime, timedelta, date
+import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 from random import *
+import matplotlib
 import pickle
 import random
 import time
@@ -123,8 +125,9 @@ def choose_dataset( ):
 # where level is which data level to produce
 # n is number of days in history to look at
 # d is number of days invested
-# returns a datapoint of a 1D list
-# uses yahoo finance api
+#
+# returns a datapoint of a 1D list, a list of the dates, a float tag
+#
 # assumes bought at open price
 # and sold at close price
 def random_investment( level, n, d, verbose ):
@@ -132,8 +135,9 @@ def random_investment( level, n, d, verbose ):
 	# for errors
 	global errors
 
-	# initial data_point and tag
+	# initial lists and tag
 	data_point = []
+	dates = []
 	tag = 0
 
 	# casting to avoid type errors
@@ -165,6 +169,7 @@ def random_investment( level, n, d, verbose ):
 	raw_history = []
 	for i in range( start, sold_date ):
 		raw_history.append( lines[i].strip() )	
+		dates.append( lines[i].strip().split(",")[0] )
 
 	################
 	# data level 0 #
@@ -395,7 +400,7 @@ def random_investment( level, n, d, verbose ):
 		print( "Good investment: " + str(tag) )
 
 	# return
-	return processed_history, tag
+	return processed_history, dates, tag
 
 ###########################################################
 # createDataSet() funct
@@ -421,7 +426,7 @@ def createDataSet(level, size, n, d):
 
 		# try to extract a random data point
 		try:
-			data_point, tag = random_investment( level, n, d, False )
+			data_point, dates, tag = random_investment( level, n, d, False )
 			data.append( data_point )
 			tags.append( tag )
 			# print output
@@ -437,6 +442,56 @@ def createDataSet(level, size, n, d):
 	# return the data and tags lists
 	return data, tags
 
+##########################################
+# graphDataSet() funct
+# uses matplotlib to show a graph of data
+# level is data level
+# dates is array of related dates
+# data is the panda dataframe
+# n number of days to look at historically before investing
+# d number of days to stay invested
+# tag is the float tag
+#
+# returns nothing, displays plot in function
+def graphDataSet(data, dates, level, n, d, tag):
+
+	global errors
+
+	# start graph
+	plt.ylabel("Price")
+	plt.title("Data level " + str(level))
+
+	# level == 0
+	if level == 0:
+		# set x ticks and label
+		plt.xlabel( str(n) + " days of data -->" )
+		ax = plt.gca()
+		xticks = ["0", dates[0]]
+		ax.set_xticklabels( xticks )
+		# set y ticks and label
+		formatter = ticker.FormatStrFormatter('$%1.2f')
+		ax.yaxis.set_major_formatter(formatter)
+		# create x axis array because native maplotlib function is being a pain
+		x = []
+		for i in range(2*n):
+			x.append( i )
+		x = np.array(x)
+		# convert strings to floats
+		y = []
+		for datum in data:
+			y.append( float(datum) )
+		y = np.array( y )
+		print( x )
+		print( y )
+		plt.plot(x, y)
+
+	# incorrect data level
+	else:
+		print( "Incorrect data type" )
+		return
+
+	# show the plot
+	plt.show()
 
 ###############
 # main method #
@@ -470,7 +525,8 @@ def main():
 		print( "3. List and analyze available data sets" )
 		print( "4. Train a model on a data set" )
 		print( "5. View a random data point and tag" )
-		print( "6. Watch model make a prediction" )
+		print( "6. Graph a random data point and tag (uses MatPlotLib)" )
+		print( "7. Watch model make a prediction" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -480,6 +536,7 @@ def main():
 			print( "\nEXITING\n" )
 			exit()
 
+		# choice == 1
 		# create new data set
 		elif choice == 1:
 
@@ -507,6 +564,7 @@ def main():
 			# wait for user  input
 			pause = input( "Press enter to continue" )
 
+		# choice == 2
 		# extend a data set
 		elif choice == 2:
 
@@ -627,7 +685,7 @@ def main():
 			# wait for user to press enter
 			pause = input( "Press enter to continue." )
 
-		# choice 4
+		# choice == 4
 		# build model from data set
 		elif choice == 4:
 
@@ -708,6 +766,7 @@ def main():
 			# pause for user input
 			pause = input( "Press enter to continue" )
 
+		# choice == 5
 		# grab and view random datum
 		elif choice == 5:
 			level = int(input("\nEnter data level: "))
@@ -715,8 +774,18 @@ def main():
 			d = int(input("Enter number of days to have been invested: "))
 			random_investment( level, n, d, True )
 
-		# watch model make a prediction
+		# choice == 6
+		# build model from data set
 		elif choice == 6:
+			level = int(input("\nEnter data level: "))
+			n = int(input("Enter number of days to look at before investing: "))
+			d = int(input("Enter number of days to have been invested: "))
+			data, dates, tag = random_investment( level, n, d, False )
+			graphDataSet( data, dates, level, n, d, tag )
+
+		# choice == 7
+		# watch model make 10,000 prediction
+		elif choice == 7:
 
 			# get model choice
 			model_filename, level, size, n, d, layer1, layer2, layer3 = choose_model()
@@ -736,7 +805,7 @@ def main():
 			while i < 10000:
 				try:
 					print( "\nTest " + str(i) )
-					data, tag = random_investment( level, n, d, False )
+					data, dates, tag = random_investment( level, n, d, False )
 					data = np.array(data)
 					data = data.reshape(1,n)
 					prediction = model.predict( data )

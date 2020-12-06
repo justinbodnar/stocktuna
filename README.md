@@ -23,6 +23,7 @@ python3 Stonks.py
 3. List and analyze available data sets
 4. Train a model on a data set
 5. View a random data point and tag
+6. Graph a random data point and tag (uses MatPlotLib)
 6. Watch model make 10,000 predictions
 
 # MORE INFORMATION
