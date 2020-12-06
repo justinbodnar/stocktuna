@@ -126,7 +126,7 @@ def choose_dataset( ):
 # n is number of days in history to look at
 # d is number of days invested
 #
-# returns a datapoint of a 1D list, a list of the dates, a float tag
+# returns ticker string, datapoint as a 1D list, a list of the dates, a float tag
 #
 # assumes bought at open price
 # and sold at close price
@@ -400,7 +400,7 @@ def random_investment( level, n, d, verbose ):
 		print( "Good investment: " + str(tag) )
 
 	# return
-	return processed_history, dates, tag
+	return stock_file, processed_history, dates, tag
 
 ###########################################################
 # createDataSet() funct
@@ -426,7 +426,7 @@ def createDataSet(level, size, n, d):
 
 		# try to extract a random data point
 		try:
-			data_point, dates, tag = random_investment( level, n, d, False )
+			stock_ticker, data_point, dates, tag = random_investment( level, n, d, False )
 			data.append( data_point )
 			tags.append( tag )
 			# print output
@@ -453,17 +453,20 @@ def createDataSet(level, size, n, d):
 # tag is the float tag
 #
 # returns nothing, displays plot in function
-def graphDataSet(data, dates, level, n, d, tag):
+def graphDataSet(stock_ticker, data, dates, level, n, d, tag):
 
 	global errors
 
+	# format stock ticker
+	stock_ticker = stock_ticker[:stock_ticker.index(".")].upper()
+
 	# start graph
 	plt.ylabel("Price")
-	plt.title("Data level " + str(level))
 
 	# level == 0
 	if level == 0:
 		# set x ticks and label
+		plt.title(stock_ticker + " - Data level " + str(level))
 		plt.xlabel( str(n) + " days of data -->" )
 		ax = plt.gca()
 		xticks = ["0", dates[0]]
@@ -481,8 +484,6 @@ def graphDataSet(data, dates, level, n, d, tag):
 		for datum in data:
 			y.append( float(datum) )
 		y = np.array( y )
-		print( x )
-		print( y )
 		plt.plot(x, y)
 
 	# incorrect data level
@@ -780,8 +781,8 @@ def main():
 			level = int(input("\nEnter data level: "))
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
-			data, dates, tag = random_investment( level, n, d, False )
-			graphDataSet( data, dates, level, n, d, tag )
+			stock_ticker, data, dates, tag = random_investment( level, n, d, False )
+			graphDataSet( stock_ticker, data, dates, level, n, d, tag )
 
 		# choice == 7
 		# watch model make 10,000 prediction
@@ -805,7 +806,7 @@ def main():
 			while i < 10000:
 				try:
 					print( "\nTest " + str(i) )
-					data, dates, tag = random_investment( level, n, d, False )
+					stock_ticker, data, dates, tag = random_investment( level, n, d, False )
 					data = np.array(data)
 					data = data.reshape(1,n)
 					prediction = model.predict( data )
