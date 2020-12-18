@@ -1,4 +1,4 @@
 *.cred
-kaggle_stock_datasets/*
+kaggle-stock-etf-dataset/*
 models/*
 datasets/*

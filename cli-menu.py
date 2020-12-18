@@ -146,7 +146,7 @@ def random_investment( level, n, d, verbose ):
 	d = int(d)
 
 	# pick random stock file
-	stock_files = os.listdir( "./kaggle_stock_datasets/Stocks" )
+	stock_files = os.listdir( "./kaggle-stock-etf-dataset/stocks" )
 	stock_file = stock_files[random.randint(0,len(stock_files))]
 
 	# output
@@ -154,7 +154,7 @@ def random_investment( level, n, d, verbose ):
 		print( "\nRandom stock file: " + stock_file )
 
 	# open stock file and convert to list
-	f = open( "./kaggle_stock_datasets/Stocks/" + stock_file )
+	f = open( "./kaggle-stock-etf-dataset/stocks/" + stock_file )
 	lines = [line for line in f.readlines()]
 
 	# get total number of days for raw history

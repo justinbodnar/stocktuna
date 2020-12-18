@@ -1,20 +1,22 @@
 # QUICK START
 
-git clone https://github.com/justinbodnar/stonks-ai.git
+git clone https://github.com/justinbodnar/stock-tuna.git
 
-cd stonks-ai
+cd stock-tuna
 
 pip3 install -r requirements.txt
+
+wget https://stocktuna.com/datasets/kaggle-stock-etf-dataset.zip
+
+unzip kaggle-stock-etf-dataset.zip
+
+rm kaggle-stock-etf-dataset.zip
 
 mkdir models
 
 mkdir datasets
 
-download the Kaggle datasets on your choice in txt form from https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
-
-extract the directory as "kaggle_stock_datasets" in the git repo root directory
-
-python3 Stonks.py
+python3 cli-menu.py
 
 # MENU OPTIONS
 
