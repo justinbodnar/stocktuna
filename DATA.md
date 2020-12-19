@@ -1,26 +1,35 @@
+# ABSTRACT
+
+How do we create a data set to train on historical trends?
+
+	- use monte carlo simulations
+	- create random investments startting on a random day in history
+	- process the trend for n days before investing
+	- invest for d days and see if we made a profit by selling on the last day
+	- 1 data point = some processed form of the trend over n days
+	- 1 tag = 'we made a profit' True or False boolean 
+
+Note: A working model was built by iknowfirst.com using a genetic algorithm and 15 years of trend data. 
+
+(https://iknowfirst.com/artificial-intelligence-stock-market-algorithmic-analysis-of-humans-and-their-behavior)
+
 # DATA SOURCE
 
-Data set can be found at https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
+Data set can be found at https://www.kaggle.com/borismarjanovic/price-volume-data-for-all-us-stocks-etfs or https://stocktuna.com/datasets/kaggle-stock-etf-dataset.zip
 
 # BASIC DATA ARCHITECTURE
 
-Raw data consists of day[0], day[1], day[2], ..., day[inf]
-
-Each day contains information about that day is the candlestick, plus volume, and openInt.
-
-ie. open price, close price, high, low, volume, openInt.
+In the kaggle-stock-etf-dataset/stocks directory are 5,885 csv files, each for a different stock ticker. Each line in a ticker file represents one day of data. Each day is a comma seperated string in the format Date, Open, High, Low, Close, Adj Close, and Volume. Dates are formatted YYYY-MM-DD.
 
 Processed data consists of information over n days.
 
-DATA = [ day_info[0], day_info[2], ..., day_info[n] ]
+DATA = [ day_info[0], day_info[1], ..., day_info[n] ]
 
 On the nth day, we stop looking at trend data, and invest in the stock at the open price. ie. open_price[n+1]
 
-We hold the stock for d days, selling at the close price. ie. close_price[n+d]
+We hold the stock for d days, selling at the close price on the final day. ie. close_price[n+d]
 
-If we made a profit the data is tagged 1.0, else it's taged 0.0
-
-TAG = 1.0
+If close_price[n+d] > open_price[n+1], we made a profit and the data is tagged 1.0, else it's taged 0.0
 
 # DATA LEVEL 0
 
