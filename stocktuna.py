@@ -1,4 +1,5 @@
-"""Create datasets, classification models, and predictions in historical stock market trends
+"""
+Create datasets, classification models, and predictions in historical stock market trends
 
 Classes:
 
@@ -17,7 +18,6 @@ Functions:
 Misc variables:
 
     errors
-
 """
 
 # imports
@@ -43,6 +43,9 @@ class DevNull:
 #sys.stderr = DevNull()
 
 def print_tuna():
+	'''
+	Prints an ASCII Tuna
+	'''
 	print("                              ██                                                        ")
 	print("                            ██░░██              ████████                                ")
 	print("                          ██░░░░░░████      ████░░░░░░░░██                              ")
@@ -65,10 +68,10 @@ def print_tuna():
 	print("                          ██░░██                                                        ")
 	print("                            ██                                                          ")
 
-#######################################
-# PrintException() funct
-# to print a more verbose error message
 def PrintException():
+	'''
+	Prints a detailed exception with file names and line numbers.
+	'''
 	global errors
 	exc_type, exc_obj, tb = sys.exc_info()
 	f = tb.tb_frame
@@ -79,93 +82,95 @@ def PrintException():
 	if errors:
 		return str('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
-##############################
-# choose_model function
-# lists the models in ./models
-# asks the user to choose
-# returns list containing:
-# string relative filepath
-# int level
-# int size
-# int n
-# int d
-# (returns [-1,-1,-1,-1] if there are no models)
 def choose_model( ):
-		# print header
-		print("\nModels available:")
-		# print headers to make data useful
-		print( "No.	Level	Size	n	d	layer1	layer2	layer3")
-		# create list of files in datalist dir
-		models = []
-		i = 0
-		for file in os.listdir("./models"):
+	'''
+	Prompts the terminal user to choose an existing model.
+
+		Returns:
+			filepath (str): the relative filepath of the chosen model
+			level (int): the data level
+			size (int): the size of the dataset
+			n (int): the number of days of history per data point
+			d (int): the number of days the stock was held before selling
+	'''
+	# print header
+	print("\nModels available:")
+	# print headers to make data useful
+	print( "No.	Level	Size	n	d	layer1	layer2	layer3")
+	# create list of files in datalist dir
+	models = []
+	i = 0
+	for file in os.listdir("./models"):
+		# append to list of datasets
+		models.append( "models/"+ file )
+		# print useful information
+		print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3] + "	" + file.split("-")[4] + "	" + file.split("-")[5] + "	" + file.split("-")[6]  ) 
+		i += 1
+
+	# check for empty directory
+	if i < 1:
+		return -1,-1,-1,-1,-1,-1,-1,-1
+
+	# get user input
+	model_choice = int(input("\nEnter number of model: ")) 
+
+	# return relative path
+	model = models[model_choice]
+	return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
+
+def choose_dataset( ):
+	'''
+	Prompts the terminal user to choose an existing dataset.
+
+		Returns:
+			filepath (str): the relative filepath of the chosen dataset
+			level (int): the data level
+			size (int): the size of the dataset
+			n (int): the number of days of history per data point
+			d (int): the number of days the stock was held before selling
+	'''
+	# print header
+	print("\nDatasets available:")
+	# print headers to make data useful
+	print( "No.	Level	Size	n	d")
+	# create list of files in datalist dir
+	datasets = []
+	i = 0
+	for file in os.listdir("./datasets"):
+		# only look at dataset files
+		if "data" in file:
 			# append to list of datasets
-			models.append( "models/"+ file )
+			datasets.append( "datasets/"+ file.split("_")[0] )
 			# print useful information
-			print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3] + "	" + file.split("-")[4] + "	" + file.split("-")[5] + "	" + file.split("-")[6]  ) 
+			print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
 			i += 1
 
-		# check for empty directory
-		if i < 1:
-			return -1,-1,-1,-1,-1,-1,-1,-1
+	# check for empty directory
+	if i < 1:
+		return -1,-1,-1,-1,-1
+	# get user input
+	dataset_choice = int(input("\nEnter number of dataset: ")) 
 
-		# get user input
-		model_choice = int(input("\nEnter number of model: ")) 
+	# return relative path
+	dataset = datasets[dataset_choice]
+	return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
 
-		# return relative path
-		model = models[model_choice]
-		return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
-
-##################################
-# choose_dataset function
-# lists the datasets in ./datasets
-# asks the user to choose
-# returns list containing:
-# string relative filepath
-# int level
-# int size
-# int n
-# int d
-# (returns [-1,-1,-1,-1] if there are no datasets)
-def choose_dataset( ):
-		# print header
-		print("\nDatasets available:")
-		# print headers to make data useful
-		print( "No.	Level	Size	n	d")
-		# create list of files in datalist dir
-		datasets = []
-		i = 0
-		for file in os.listdir("./datasets"):
-			# only look at dataset files
-			if "data" in file:
-				# append to list of datasets
-				datasets.append( "datasets/"+ file.split("_")[0] )
-				# print useful information
-				print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
-				i += 1
-
-		# check for empty directory
-		if i < 1:
-			return -1,-1,-1,-1,-1
-		# get user input
-		dataset_choice = int(input("\nEnter number of dataset: ")) 
-
-		# return relative path
-		dataset = datasets[dataset_choice]
-		return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
-
-#############################################
-# random_investment() funct
-# takes level, n, d, and verbose boolean
-# where level is which data level to produce
-# n is number of days in history to look at
-# d is number of days invested
-#
-# returns ticker string, datapoint as a 1D list, a list of the dates, a float tag
-#
-# assumes bought at open price
-# and sold at close price
 def random_investment( level, n, d, verbose ):
+	'''
+	Prompts the terminal user to choose an existing dataset.
+
+		Parameters:
+			level(int): the data level to work with
+			n(int): the number of days of history to look at
+			d(int): the number of days to hold before selling
+			verbose(boolean): whether or not to print what's happening
+
+		Returns:
+			ticker(string): the stock ticker that was randomly chosen
+			data(2dlist[string]): the datas as CSV strings in a 2d list
+			dates(list[string]): the randomly chosen contiguous dates used
+			tag(float): the tag, where 1.0 is true, and 0.0 is false
+	'''
 
 	# for errors
 	global errors
@@ -437,17 +442,20 @@ def random_investment( level, n, d, verbose ):
 	# return
 	return stock_file, processed_history, dates, tag
 
-###########################################################
-# createDataSet() funct
-# uses random_investment function
-# level number of data level
-# size is the size of dataset
-# n number of days to look at historically before investing
-# d number of days to stay invested
-# and n is number of days in history to look at
-# returns 2 lists: data, tags
 def createDataSet(level, size, n, d):
+	'''
+	Creates random data via Monte Carlo simlations, and processes it into a symmetrical dataset for training
 
+		Parameters:
+			level (int): the data level to use
+			size (int): the size of the dataset
+			n (int): the number of trading days processed
+			d (int): the number of days before selling
+
+		Returns:
+			data (2dlist[string]): training data as 2d list of area SIZE*N
+			tags (list[float]): the tags for each data point, associative to data list
+	'''
 	global errors
 
 	# setup vars
@@ -455,7 +463,6 @@ def createDataSet(level, size, n, d):
 	tags = []
 
 	# lets get a few random trades and see how we make out
-	# each investment will be $100.00
 	i = 0
 	while len(data) < size:
 
@@ -464,9 +471,11 @@ def createDataSet(level, size, n, d):
 			stock_ticker, data_point, dates, tag = random_investment( level, n, d, False )
 			data.append( data_point )
 			tags.append( tag )
+
 			# print output
 			print( "[", i+1, "of", size, "]" )
 			i = i + 1
+
 		# print errors:
 		except Exception as e:
 			if errors:
@@ -477,20 +486,19 @@ def createDataSet(level, size, n, d):
 	# return the data and tags lists
 	return data, tags
 
-##########################################
-# graphDataSet() funct
-# uses matplotlib to show a graph of data
-# level is data level
-# dates is array of related dates
-# data is the panda dataframe
-# n number of days to look at historically before investing
-# d number of days to stay invested
-# tag is the float tag
-#
-# returns nothing, displays plot in function
-def graphDataSet(stock_ticker, data, dates, level, n, d, tag):
+def graphDataSet(stock_ticker, data, dates, level, n, d, tags):
 	'''
-	graphDataSet(stock_ticker, data, dates, level, n, d, tag)
+	Uses MatPlotLib to display a visual representation of a dataset (IN DEV)
+
+		Parameters:
+			stock_ticker (str): the stock ticker, will be displayed on the graph
+			data (2dlist[string]): the data set as 2dstring array of size SIZE*N
+			dates (list[string]): the list of dates, associative (am i using this word correctly?) with the data set
+			level (int): the data level used
+			n (int): the number of days of history per data point
+			d (int): the number of days the stock was held before selling
+			tags list[float]: list of tags, associative with data set
+			
 	'''
 	global errors
 
