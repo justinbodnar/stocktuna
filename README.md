@@ -18,6 +18,10 @@ mkdir datasets
 
 python3 cli-menu.py
 
+OR
+
+pydocs3 stocktuna
+
 # MENU OPTIONS
 
 1. Create new data sets
