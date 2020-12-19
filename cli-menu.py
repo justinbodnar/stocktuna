@@ -21,13 +21,11 @@ def main():
 
 	global errors
 
-	# clear the screen
-	for i in range(30):
-		print()
-
 	# print opening header
-	print( "##########################" )
-	print( "Stonks.py by Justin Bodnar" )
+	print()
+	tuna.print_tuna()
+	print()
+	print( "stock-tuna by Justin Bodnar" )
 	print()
 	print( "Can we teach computers to speculate?" )
 	print()
