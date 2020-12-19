@@ -72,7 +72,7 @@ def main():
 				if errors:
 					print( "error on data or tag save" )
 					print( e )
-					tuna.PrintException()
+					print(tuna.PrintException())
 
 			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
 			print( "Filename: level-size-n-d_[data|tags]" )
@@ -119,7 +119,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					tuna.PrintException()
+					print(tuna.PrintException())
 				pass
 
 		# choice == 3
@@ -191,7 +191,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					PrintException()
+					print(PrintException())
 				pass
 
 			print()
@@ -274,7 +274,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					tuna.PrintException()
+					print(tuna.PrintException())
 				pass
 
 			# pause for user input

@@ -1,8 +1,24 @@
-# -*- coding: UTF-8 -*-
-####################
-# stocktuna.py     #
-# by Justin Bodnar #
-####################
+"""Create datasets, classification models, and predictions in historical stock market trends
+
+Classes:
+
+    DevNull
+
+Functions:
+
+	print_tuna( )
+	PrintException( ) -> string
+	choose_model( ) -> string, int, int, int, int, int, int, int
+	choose_dataset( ) -> string, int, int, int, int
+	random_investment(int, int, int, boolean) -> string, 2dlist[string], list[string], float
+	createDataSet(int, int, int, int) -> 2dlist[string], list[float]
+	graphDataSet(string, 2dlist["string"], list[string], int, int, int, float)
+
+Misc variables:
+
+    errors
+
+"""
 
 # imports
 import matplotlib.ticker as ticker
@@ -61,7 +77,7 @@ def PrintException():
 	linecache.checkcache(filename)
 	line = linecache.getline(filename, lineno, f.f_globals)
 	if errors:
-		print( 'EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
+		return str('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
 
 ##############################
 # choose_model function
@@ -473,7 +489,9 @@ def createDataSet(level, size, n, d):
 #
 # returns nothing, displays plot in function
 def graphDataSet(stock_ticker, data, dates, level, n, d, tag):
-
+	'''
+	graphDataSet(stock_ticker, data, dates, level, n, d, tag)
+	'''
 	global errors
 
 	# format stock ticker
