@@ -1,8 +1,8 @@
 # QUICK START
 
-git clone https://github.com/justinbodnar/stock-tuna.git
+git clone https://github.com/justinbodnar/stocktuna.git
 
-cd stock-tuna
+cd stocktuna
 
 pip3 install -r requirements.txt
 
@@ -20,7 +20,7 @@ python3 cli-menu.py
 
 OR
 
-pydocs3 stocktuna
+pydoc3 stocktuna
 
 # CLI MENU OPTIONS
 

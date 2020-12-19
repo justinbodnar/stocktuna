@@ -24,7 +24,7 @@ def main():
 	# print opening header
 	print()
 	tuna.print_tuna()
-	print( "\nstock-tuna by Justin Bodnar\n" )
+	print( "\nstocktuna by Justin Bodnar\n" )
 	print( "Can we teach computers to speculate?\n" )
 
 	# main program infinite loop
@@ -41,7 +41,7 @@ def main():
 		print( "4. Train a model on a data set" )
 		print( "5. View a random data point and tag" )
 		print( "6. Graph a random data point and tag (uses MatPlotLib)" )
-		print( "7. Watch model make a prediction" )
+		print( "7. Watch a model make 10,000 predictions" )
 
 		# get user chice
 		choice = int(input( "\nEnter choice: "))
@@ -57,23 +57,15 @@ def main():
 
 			# get user parameters
 			level = int(input("Enter data level: "))
-			sizeOfDataset = int(input("Enter size of dataset: "))
-			daysOfHistory = int(input("Enter the number of days to look at: "))
-			daysInvested = int(input("Enter number of days invested: "))
-			filename = str(level)+"-"+str(sizeOfDataset)+"-"+str(daysOfHistory)+"-"+str(daysInvested)
+			size = int(input("Enter size of dataset: "))
+			n = int(input("Enter the number of days to look at: "))
+			d = int(input("Enter number of days invested: "))
+			filename = str(level)+"-"+str(size)+"-"+str(n)+"-"+str(d)
+
 			# create data set
-			data, tags = tuna.createDataSet(level, sizeOfDataset, daysOfHistory, daysInvested)
+			data, tags = tuna.create_data_set(level, size, n, d)
 
-			# save data sets
-			try:
-				pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
-				pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
-			except Exception as e:
-				if errors:
-					print( "error on data or tag save" )
-					print( e )
-					print(tuna.print_exception())
-
+			# output
 			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
 			print( "Filename: level-size-n-d_[data|tags]" )
 			# wait for user  input
@@ -102,7 +94,7 @@ def main():
 				tags = pickle.load( open( dataset_filename + "_tags", "rb" ) )
 
 				# get new list
-				newData, newTags = tuna.createDataSet(int(level), number_of_data_to_add, int(n), int(d))
+				newData, newTags = tuna.create_data_set(int(level), number_of_data_to_add, int(n), int(d))
 
 				# append lists
 				data += newData
@@ -323,7 +315,6 @@ def main():
 					data = np.array(data)
 					data = data.reshape(1,n)
 					prediction = model.predict( data )
-					print("Good investment?")
 					if prediction[0][0] > prediction[0][1]:
 						pred = "Don't invest"
 					else:
@@ -342,7 +333,7 @@ def main():
 #					standby = input( "Press enter for next prediction" )
 				# catch errors
 				except Exception as e:
-					print( e )
+#					print( e )
 					continue
 
 

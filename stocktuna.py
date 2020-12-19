@@ -26,13 +26,13 @@ import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 import numpy as np
 import linecache
+import pickle
 import random
 import sys
 import os
 
 # global var for debugging
 errors = True
-
 class DevNull:
 	'''
 	helper class to suppress random errors
@@ -41,7 +41,7 @@ class DevNull:
 		pass
 
 # set stderr to redirect to helper class
-#sys.stderr = DevNull()
+sys.stderr = DevNull()
 
 def print_tuna():
 	'''
@@ -406,11 +406,18 @@ def create_data_set(level, size, n, d):
 
 		# print errors:
 		except Exception as e:
-			if errors:
-				print( e )
-				PrintException()
 			pass
 
+	# save data sets
+	try:
+		filename = str(level)+"-"+str(size)+"-"+str(n)+"-"+str(d)
+		pickle.dump( data, open( "./datasets/"+filename+"_data", "wb" ) )
+		pickle.dump( tags, open ( "./datasets/"+filename+"_tags", "wb" ) )
+	except Exception as e:
+		if errors:
+			print( "error on data or tag save" )
+			print( e )
+			print(print_exception())
 	# return the data and tags lists
 	return data, tags
 
