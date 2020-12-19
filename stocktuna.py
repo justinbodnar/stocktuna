@@ -10,11 +10,12 @@ Functions:
 
 	print_tuna( )
 	print_exception( ) -> string
-	cli_choose_model( ) -> string, int, int, int, int, int, int, int
-	cli_choose_dataset( ) -> string, int, int, int, int
 	random_investment(int, int, int, boolean) -> string, 2dlist[string], list[string], float
 	create_data_set(int, int, int, int) -> 2dlist[string], list[float]
 	graph_data_set(string, 2dlist["string"], list[string], int, int, int, float)
+        cli_choose_model( ) -> string, int, int, int, int, int, int, int
+        cli_choose_dataset( ) -> string, int, int, int, int
+	cli_make_predictions( ) -> int, int, int, int, int
 
 Misc variables:
 

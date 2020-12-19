@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module stocktuna</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>stocktuna</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/turing/Development/stock-tuna/stocktuna.py">/home/turing/Development/stock-tuna/stocktuna.py</a></font></td></tr></table>
+    <p><tt>Create&nbsp;datasets,&nbsp;classification&nbsp;models,&nbsp;and&nbsp;predictions&nbsp;in&nbsp;historical&nbsp;stock&nbsp;market&nbsp;trends<br>
+&nbsp;<br>
+Classes:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DevNull">DevNull</a><br>
+&nbsp;<br>
+Functions:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-print_tuna">print_tuna</a>(&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-print_exception">print_exception</a>(&nbsp;)&nbsp;-&gt;&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-random_investment">random_investment</a>(int,&nbsp;int,&nbsp;int,&nbsp;boolean)&nbsp;-&gt;&nbsp;string,&nbsp;2dlist[string],&nbsp;list[string],&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-create_data_set">create_data_set</a>(int,&nbsp;int,&nbsp;int,&nbsp;int)&nbsp;-&gt;&nbsp;2dlist[string],&nbsp;list[float]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-graph_data_set">graph_data_set</a>(string,&nbsp;2dlist["string"],&nbsp;list[string],&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;float)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-cli_choose_model">cli_choose_model</a>(&nbsp;)&nbsp;-&gt;&nbsp;string,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-cli_choose_dataset">cli_choose_dataset</a>(&nbsp;)&nbsp;-&gt;&nbsp;string,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-cli_make_predictions">cli_make_predictions</a>(&nbsp;)&nbsp;-&gt;&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int,&nbsp;int<br>
+&nbsp;<br>
+Misc&nbsp;variables:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;errors</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="linecache.html">linecache</a><br>
+<a href="numpy.html">numpy</a><br>
+<a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
+<a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+<a href="random.html">random</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="tensorflow.html">tensorflow</a><br>
+<a href="matplotlib.ticker.html">matplotlib.ticker</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="stocktuna.html#DevNull">DevNull</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DevNull">class <strong>DevNull</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>helper&nbsp;class&nbsp;to&nbsp;suppress&nbsp;random&nbsp;errors<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DevNull-write"><strong>write</strong></a>(self, msg)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-cli_choose_dataset"><strong>cli_choose_dataset</strong></a>()</dt><dd><tt>Prompts&nbsp;the&nbsp;terminal&nbsp;user&nbsp;to&nbsp;choose&nbsp;an&nbsp;existing&nbsp;dataset.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(str):&nbsp;the&nbsp;relative&nbsp;filepath&nbsp;of&nbsp;the&nbsp;chosen&nbsp;dataset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;(int):&nbsp;the&nbsp;data&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;(int):&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;dataset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;of&nbsp;history&nbsp;per&nbsp;data&nbsp;point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;the&nbsp;stock&nbsp;was&nbsp;held&nbsp;before&nbsp;selling</tt></dd></dl>
+ <dl><dt><a name="-cli_choose_model"><strong>cli_choose_model</strong></a>()</dt><dd><tt>Prompts&nbsp;the&nbsp;terminal&nbsp;user&nbsp;to&nbsp;choose&nbsp;an&nbsp;existing&nbsp;model.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(str):&nbsp;the&nbsp;relative&nbsp;filepath&nbsp;of&nbsp;the&nbsp;chosen&nbsp;model<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;(int):&nbsp;the&nbsp;data&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;(int):&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;dataset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;of&nbsp;history&nbsp;per&nbsp;data&nbsp;point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;the&nbsp;stock&nbsp;was&nbsp;held&nbsp;before&nbsp;selling</tt></dd></dl>
+ <dl><dt><a name="-cli_make_predictions"><strong>cli_make_predictions</strong></a>(count, model_filename, level, n, d)</dt><dd><tt>Creates&nbsp;random&nbsp;data&nbsp;points,&nbsp;and&nbsp;lets&nbsp;a&nbsp;model&nbsp;predict&nbsp;the&nbsp;tag<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;predictions&nbsp;to&nbsp;make<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model_filename&nbsp;(string):&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;pickled&nbsp;model&nbsp;file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;(int):&nbsp;the&nbsp;data&nbsp;level&nbsp;to&nbsp;use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;trading&nbsp;days&nbsp;processed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;before&nbsp;selling</tt></dd></dl>
+ <dl><dt><a name="-create_data_set"><strong>create_data_set</strong></a>(level, size, n, d)</dt><dd><tt>Creates&nbsp;random&nbsp;data&nbsp;via&nbsp;Monte&nbsp;Carlo&nbsp;simlations,&nbsp;and&nbsp;processes&nbsp;it&nbsp;into&nbsp;a&nbsp;symmetrical&nbsp;dataset&nbsp;for&nbsp;training<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;(int):&nbsp;the&nbsp;data&nbsp;level&nbsp;to&nbsp;use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;(int):&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;dataset<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;trading&nbsp;days&nbsp;processed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;before&nbsp;selling<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;(2dlist[string]):&nbsp;training&nbsp;data&nbsp;as&nbsp;2d&nbsp;list&nbsp;of&nbsp;area&nbsp;SIZE*N<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tags&nbsp;(list[float]):&nbsp;the&nbsp;tags&nbsp;for&nbsp;each&nbsp;data&nbsp;point,&nbsp;associative&nbsp;to&nbsp;data&nbsp;list</tt></dd></dl>
+ <dl><dt><a name="-graph_data_set"><strong>graph_data_set</strong></a>(stock_ticker, data, dates, level, n, d, tags)</dt><dd><tt>Uses&nbsp;MatPlotLib&nbsp;to&nbsp;display&nbsp;a&nbsp;visual&nbsp;representation&nbsp;of&nbsp;a&nbsp;dataset&nbsp;(IN&nbsp;DEV)<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stock_ticker&nbsp;(str):&nbsp;the&nbsp;stock&nbsp;ticker,&nbsp;will&nbsp;be&nbsp;displayed&nbsp;on&nbsp;the&nbsp;graph<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;(2dlist[string]):&nbsp;the&nbsp;data&nbsp;set&nbsp;as&nbsp;2dstring&nbsp;array&nbsp;of&nbsp;size&nbsp;SIZE*N<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dates&nbsp;(list[string]):&nbsp;the&nbsp;list&nbsp;of&nbsp;dates,&nbsp;associative&nbsp;(am&nbsp;i&nbsp;using&nbsp;this&nbsp;word&nbsp;correctly?)&nbsp;with&nbsp;the&nbsp;data&nbsp;set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;(int):&nbsp;the&nbsp;data&nbsp;level&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;of&nbsp;history&nbsp;per&nbsp;data&nbsp;point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d&nbsp;(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;the&nbsp;stock&nbsp;was&nbsp;held&nbsp;before&nbsp;selling<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tags&nbsp;list[float]:&nbsp;list&nbsp;of&nbsp;tags,&nbsp;associative&nbsp;with&nbsp;data&nbsp;set</tt></dd></dl>
+ <dl><dt><a name="-print_exception"><strong>print_exception</strong></a>()</dt><dd><tt>Prints&nbsp;a&nbsp;detailed&nbsp;exception&nbsp;with&nbsp;file&nbsp;names&nbsp;and&nbsp;line&nbsp;numbers.</tt></dd></dl>
+ <dl><dt><a name="-print_tuna"><strong>print_tuna</strong></a>()</dt><dd><tt>Prints&nbsp;an&nbsp;ASCII&nbsp;Tuna</tt></dd></dl>
+ <dl><dt><a name="-random_investment"><strong>random_investment</strong></a>(level, n, d, verbose)</dt><dd><tt>Gets&nbsp;a&nbsp;single&nbsp;random&nbsp;data&nbsp;point,&nbsp;and&nbsp;processes&nbsp;it<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level(int):&nbsp;the&nbsp;data&nbsp;level&nbsp;to&nbsp;work&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;of&nbsp;history&nbsp;to&nbsp;look&nbsp;at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d(int):&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;to&nbsp;hold&nbsp;before&nbsp;selling<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verbose(boolean):&nbsp;whether&nbsp;or&nbsp;not&nbsp;to&nbsp;print&nbsp;what's&nbsp;happening<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ticker(string):&nbsp;the&nbsp;stock&nbsp;ticker&nbsp;that&nbsp;was&nbsp;randomly&nbsp;chosen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data(2dlist[string]):&nbsp;the&nbsp;datas&nbsp;as&nbsp;CSV&nbsp;strings&nbsp;in&nbsp;a&nbsp;2d&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dates(list[string]):&nbsp;the&nbsp;randomly&nbsp;chosen&nbsp;contiguous&nbsp;dates&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tag(float):&nbsp;the&nbsp;tag,&nbsp;where&nbsp;1.0&nbsp;is&nbsp;true,&nbsp;and&nbsp;0.0&nbsp;is&nbsp;false</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>errors</strong> = True</td></tr></table>
+</body></html>
