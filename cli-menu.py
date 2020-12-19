@@ -290,55 +290,21 @@ def main():
 			tuna.graph_data_set( stock_ticker, data, dates, level, n, d, tag )
 
 		# choice == 7
-		# watch model make 10,000 prediction
+		# watch model make predictions
 		elif choice == 7:
 
 			# get model choice
 			model_filename, level, size, n, d, layer1, layer2, layer3 = tuna.choose_model()
+
+			# get how many predictions
+			count = int(input( "How many predictions to make? "))
 
 			# check for no models
 			if level < 0:
 				standyby = input( "NO MODELS TO LOAD. PRESS ENTER TO CONTINUE" )
 				continue
 
-			# load model
-			model = tf.keras.models.load_model( model_filename )
-
-			# make 10,000 verbose predictions
-			right = 0
-			wrong = 0
-			i = 0
-			while i < 10000:
-				try:
-					print( "\nTest " + str(i) )
-					stock_ticker, data, dates, tag = tuna.random_investment( level, n, d, False )
-					data = np.array(data)
-					data = data.reshape(1,n)
-					prediction = model.predict( data )
-					if prediction[0][0] > prediction[0][1]:
-						pred = "Don't invest"
-					else:
-						pred = "Invest"
-					if tag < 1:
-						tag = "Don't invest"
-					else:
-						tag = "Invest"
-					print( "Model:  " + pred )
-					print( "Actual: " + tag )
-					if pred == tag:
-						right += 1
-					else:
-						wrong += 1
-					i += 1
-#					standby = input( "Press enter for next prediction" )
-				# catch errors
-				except Exception as e:
-#					print( e )
-					continue
-
-
-			print( "\nRight: " + str(right) )
-			print( "Wrong: " + str(wrong) )
+			tuna.cli_make_predictions( count, model_filename, level, n, d )
 
 		# choice != VALID
 		else:

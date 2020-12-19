@@ -24,6 +24,7 @@ Misc variables:
 # imports
 import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
+import tensorflow as tf
 import numpy as np
 import linecache
 import pickle
@@ -41,7 +42,7 @@ class DevNull:
 		pass
 
 # set stderr to redirect to helper class
-sys.stderr = DevNull()
+#sys.stderr = DevNull()
 
 def print_tuna():
 	'''
@@ -420,6 +421,59 @@ def create_data_set(level, size, n, d):
 			print(print_exception())
 	# return the data and tags lists
 	return data, tags
+
+
+def cli_make_predictions( count, model_filename, level, n, d ):
+	'''
+	Creates random data points, and lets a model predict the tag
+
+		Parameters:
+			count (int): the number of predictions to make
+			model_filename (string): the name of the pickled model file
+			level (int): the data level to use
+			n (int): the number of trading days processed
+			d (int): the number of days before selling
+
+	'''
+	# load model
+	model = tf.keras.models.load_model( model_filename )
+
+	# make verbose predictions
+	right = 0
+	wrong = 0
+	i = 0
+	while i < count:
+		try:
+			print( "\nTest " + str(i) )
+			stock_ticker, data, dates, tag = random_investment( level, n, d, False )
+			data = np.array(data)
+			data = data.reshape(1,n)
+			prediction = model.predict( data )
+			if prediction[0][0] > prediction[0][1]:
+				pred = "Don't invest"
+			else:
+				pred = "Invest"
+			if tag < 1:
+				tag = "Don't invest"
+			else:
+				tag = "Invest"
+			print( "Model:  " + pred )
+			print( "Actual: " + tag )
+			if pred == tag:
+				right += 1
+			else:
+				wrong += 1
+			i += 1
+#			standby = input( "Press enter for next prediction" )
+		# catch errors
+		except Exception as e:
+			print( e )
+			continue
+
+
+	print( "\nRight: " + str(right) )
+	print( "Wrong: " + str(wrong) )
+
 
 def choose_model( ):
 	'''
