@@ -1,4 +1,6 @@
+stocktuna.pyc
 *.cred
+__pycache__/*
 kaggle-stock-etf-dataset/*
 models/*
 datasets/*

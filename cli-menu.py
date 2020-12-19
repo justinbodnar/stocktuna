@@ -24,11 +24,8 @@ def main():
 	# print opening header
 	print()
 	tuna.print_tuna()
-	print()
-	print( "stock-tuna by Justin Bodnar" )
-	print()
-	print( "Can we teach computers to speculate?" )
-	print()
+	print( "\nstock-tuna by Justin Bodnar\n" )
+	print( "Can we teach computers to speculate?\n" )
 
 	# main program infinite loop
 	choice = 420
@@ -36,7 +33,6 @@ def main():
 		choice = 0
 
 		# main menu text
-		print()
 		print( "Menu" )
 		print( "0. EXIT" )
 		print( "1. Create new data sets" )
@@ -156,8 +152,7 @@ def main():
 					if len(data_point) < min:
 						min = len(data_point)
 				# print output
-				print()
-				print( "Name: ", dataset_filename )
+				print( "\nName: ", dataset_filename )
 				print( "Dim 1:", len(data_set), "(size)")
 				if min == max:
 					print( "Dim 2:", min, "(n)" )
