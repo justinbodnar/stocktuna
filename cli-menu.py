@@ -1,7 +1,7 @@
-####################
-# cli-menu.py      #
-# by Justin Bodnar #
-####################
+"""
+cli-menu.py
+by Justin Bodnar
+"""
 
 # imports
 import stocktuna as tuna

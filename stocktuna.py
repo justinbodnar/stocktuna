@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """
 Create datasets, classification models, and predictions in historical stock market trends
 
@@ -32,10 +33,10 @@ import os
 # global var for debugging
 errors = True
 
-########################################
-# DevNull class
-# helper class to suppress random errors
 class DevNull:
+	'''
+	helper class to suppress random errors
+	'''
 	def write(self, msg):
 		pass
 
