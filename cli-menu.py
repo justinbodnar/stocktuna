@@ -78,7 +78,7 @@ def main():
 			# try-catch block
 			try:
 				# get user input
-				dataset_filename, level, size, n, d = tuna.choose_dataset()
+				dataset_filename, level, size, n, d = tuna.cli_choose_dataset()
 
 				# check for 0 datasets
 				if level < 0:
@@ -119,7 +119,7 @@ def main():
 		elif choice == 3:
 
 			# get user input
-			dataset_filename, level, size, n, d = tuna.choose_dataset()
+			dataset_filename, level, size, n, d = tuna.cli_choose_dataset()
 
 			# check for 0 datasets
 			if level < 0:
@@ -199,7 +199,7 @@ def main():
 			try:
 
 				# get user input
-				dataset_filename, level, size, n, d = tuna.choose_dataset()
+				dataset_filename, level, size, n, d = tuna.cli_choose_dataset()
 
 				# check for 0 datasets
 				if level < 0:
@@ -294,7 +294,7 @@ def main():
 		elif choice == 7:
 
 			# get model choice
-			model_filename, level, size, n, d, layer1, layer2, layer3 = tuna.choose_model()
+			model_filename, level, size, n, d, layer1, layer2, layer3 = tuna.cli_choose_model()
 
 			# get how many predictions
 			count = int(input( "How many predictions to make? "))

@@ -10,8 +10,8 @@ Functions:
 
 	print_tuna( )
 	print_exception( ) -> string
-	choose_model( ) -> string, int, int, int, int, int, int, int
-	choose_dataset( ) -> string, int, int, int, int
+	cli_choose_model( ) -> string, int, int, int, int, int, int, int
+	cli_choose_dataset( ) -> string, int, int, int, int
 	random_investment(int, int, int, boolean) -> string, 2dlist[string], list[string], float
 	create_data_set(int, int, int, int) -> 2dlist[string], list[float]
 	graph_data_set(string, 2dlist["string"], list[string], int, int, int, float)
@@ -422,132 +422,6 @@ def create_data_set(level, size, n, d):
 	# return the data and tags lists
 	return data, tags
 
-
-def cli_make_predictions( count, model_filename, level, n, d ):
-	'''
-	Creates random data points, and lets a model predict the tag
-
-		Parameters:
-			count (int): the number of predictions to make
-			model_filename (string): the name of the pickled model file
-			level (int): the data level to use
-			n (int): the number of trading days processed
-			d (int): the number of days before selling
-
-	'''
-	# load model
-	model = tf.keras.models.load_model( model_filename )
-
-	# make verbose predictions
-	right = 0
-	wrong = 0
-	i = 0
-	while i < count:
-		try:
-			print( "\nTest " + str(i) )
-			stock_ticker, data, dates, tag = random_investment( level, n, d, False )
-			data = np.array(data)
-			data = data.reshape(1,n)
-			prediction = model.predict( data )
-			if prediction[0][0] > prediction[0][1]:
-				pred = "Don't invest"
-			else:
-				pred = "Invest"
-			if tag < 1:
-				tag = "Don't invest"
-			else:
-				tag = "Invest"
-			print( "Model:  " + pred )
-			print( "Actual: " + tag )
-			if pred == tag:
-				right += 1
-			else:
-				wrong += 1
-			i += 1
-#			standby = input( "Press enter for next prediction" )
-		# catch errors
-		except Exception as e:
-			print( e )
-			continue
-
-
-	print( "\nRight: " + str(right) )
-	print( "Wrong: " + str(wrong) )
-
-
-def choose_model( ):
-	'''
-	Prompts the terminal user to choose an existing model.
-
-		Returns:
-			filepath (str): the relative filepath of the chosen model
-			level (int): the data level
-			size (int): the size of the dataset
-			n (int): the number of days of history per data point
-			d (int): the number of days the stock was held before selling
-	'''
-	# print header
-	print("\nModels available:")
-	# print headers to make data useful
-	print( "No.	Level	Size	n	d	layer1	layer2	layer3")
-	# create list of files in datalist dir
-	models = []
-	i = 0
-	for file in os.listdir("./models"):
-		# append to list of datasets
-		models.append( "models/"+ file )
-		# print useful information
-		print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3] + "	" + file.split("-")[4] + "	" + file.split("-")[5] + "	" + file.split("-")[6]  ) 
-		i += 1
-
-	# check for empty directory
-	if i < 1:
-		return -1,-1,-1,-1,-1,-1,-1,-1
-
-	# get user input
-	model_choice = int(input("\nEnter number of model: ")) 
-
-	# return relative path
-	model = models[model_choice]
-	return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
-
-def choose_dataset( ):
-	'''
-	Prompts the terminal user to choose an existing dataset.
-
-		Returns:
-			filepath (str): the relative filepath of the chosen dataset
-			level (int): the data level
-			size (int): the size of the dataset
-			n (int): the number of days of history per data point
-			d (int): the number of days the stock was held before selling
-	'''
-	# print header
-	print("\nDatasets available:")
-	# print headers to make data useful
-	print( "No.	Level	Size	n	d")
-	# create list of files in datalist dir
-	datasets = []
-	i = 0
-	for file in os.listdir("./datasets"):
-		# only look at dataset files
-		if "data" in file:
-			# append to list of datasets
-			datasets.append( "datasets/"+ file.split("_")[0] )
-			# print useful information
-			print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
-			i += 1
-
-	# check for empty directory
-	if i < 1:
-		return -1,-1,-1,-1,-1
-	# get user input
-	dataset_choice = int(input("\nEnter number of dataset: ")) 
-
-	# return relative path
-	dataset = datasets[dataset_choice]
-	return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
-
 def graph_data_set(stock_ticker, data, dates, level, n, d, tags):
 	'''
 	Uses MatPlotLib to display a visual representation of a dataset (IN DEV)
@@ -601,3 +475,127 @@ def graph_data_set(stock_ticker, data, dates, level, n, d, tags):
 	# show the plot
 	plt.show()
 
+def cli_make_predictions( count, model_filename, level, n, d ):
+	'''
+	Creates random data points, and lets a model predict the tag
+
+		Parameters:
+			count (int): the number of predictions to make
+			model_filename (string): the name of the pickled model file
+			level (int): the data level to use
+			n (int): the number of trading days processed
+			d (int): the number of days before selling
+
+	'''
+	# load model
+	model = tf.keras.models.load_model( model_filename )
+
+	# make verbose predictions
+	right = 0
+	wrong = 0
+	i = 0
+	while i < count:
+		try:
+			print( "\nTest " + str(i) )
+			stock_ticker, data, dates, tag = random_investment( level, n, d, False )
+			data = np.array(data)
+			data = data.reshape(1,n)
+			prediction = model.predict( data )
+			if prediction[0][0] > prediction[0][1]:
+				pred = "Don't invest"
+			else:
+				pred = "Invest"
+			if tag < 1:
+				tag = "Don't invest"
+			else:
+				tag = "Invest"
+			print( "Model:  " + pred )
+			print( "Actual: " + tag )
+			if pred == tag:
+				right += 1
+			else:
+				wrong += 1
+			i += 1
+#			standby = input( "Press enter for next prediction" )
+		# catch errors
+		except Exception as e:
+			print( e )
+			continue
+
+
+	print( "\nRight: " + str(right) )
+	print( "Wrong: " + str(wrong) )
+
+
+def cli_choose_model( ):
+	'''
+	Prompts the terminal user to choose an existing model.
+
+		Returns:
+			filepath (str): the relative filepath of the chosen model
+			level (int): the data level
+			size (int): the size of the dataset
+			n (int): the number of days of history per data point
+			d (int): the number of days the stock was held before selling
+	'''
+	# print header
+	print("\nModels available:")
+	# print headers to make data useful
+	print( "No.	Level	Size	n	d	layer1	layer2	layer3")
+	# create list of files in datalist dir
+	models = []
+	i = 0
+	for file in os.listdir("./models"):
+		# append to list of datasets
+		models.append( "models/"+ file )
+		# print useful information
+		print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3] + "	" + file.split("-")[4] + "	" + file.split("-")[5] + "	" + file.split("-")[6]  ) 
+		i += 1
+
+	# check for empty directory
+	if i < 1:
+		return -1,-1,-1,-1,-1,-1,-1,-1
+
+	# get user input
+	model_choice = int(input("\nEnter number of model: ")) 
+
+	# return relative path
+	model = models[model_choice]
+	return( model, int(model.split("-")[0].split("/")[1]), int(model.split("-")[1]), int(model.split("-")[2]), int(model.split("-")[3]), int(model.split("-")[4]), int(model.split("-")[5]), int(model.split("-")[6])  )
+
+def cli_choose_dataset( ):
+	'''
+	Prompts the terminal user to choose an existing dataset.
+
+		Returns:
+			filepath (str): the relative filepath of the chosen dataset
+			level (int): the data level
+			size (int): the size of the dataset
+			n (int): the number of days of history per data point
+			d (int): the number of days the stock was held before selling
+	'''
+	# print header
+	print("\nDatasets available:")
+	# print headers to make data useful
+	print( "No.	Level	Size	n	d")
+	# create list of files in datalist dir
+	datasets = []
+	i = 0
+	for file in os.listdir("./datasets"):
+		# only look at dataset files
+		if "data" in file:
+			# append to list of datasets
+			datasets.append( "datasets/"+ file.split("_")[0] )
+			# print useful information
+			print( str(i) + "	" + file.split("-")[0] + "	" + file.split("-")[1] + "	" + file.split("-")[2] + "	" + file.split("-")[3].split("_")[0] )
+			i += 1
+
+	# check for empty directory
+	if i < 1:
+		return -1,-1,-1,-1,-1
+	# get user input
+	dataset_choice = int(input("\nEnter number of dataset: ")) 
+
+	# return relative path
+	dataset = datasets[dataset_choice]
+	return( dataset, int(dataset.split("-")[0].split("/")[1]), int(dataset.split("-")[1]), int(dataset.split("-")[2]), int(dataset.split("-")[3]) )
