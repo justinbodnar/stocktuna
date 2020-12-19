@@ -72,7 +72,7 @@ def main():
 				if errors:
 					print( "error on data or tag save" )
 					print( e )
-					print(tuna.PrintException())
+					print(tuna.print_exception())
 
 			print( "Dataset saved as ./datasets/"+ filename+"_tags and ./datasets/"+ filename+"_data" ) 
 			print( "Filename: level-size-n-d_[data|tags]" )
@@ -119,7 +119,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					print(tuna.PrintException())
+					print(tuna.print_exception())
 				pass
 
 		# choice == 3
@@ -191,7 +191,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					print(PrintException())
+					print(print_exception())
 				pass
 
 			print()
@@ -274,7 +274,7 @@ def main():
 			except Exception as e:
 				if errors:
 					print( e )
-					print(tuna.PrintException())
+					print(tuna.print_exception())
 				pass
 
 			# pause for user input
@@ -295,7 +295,7 @@ def main():
 			n = int(input("Enter number of days to look at before investing: "))
 			d = int(input("Enter number of days to have been invested: "))
 			stock_ticker, data, dates, tag = tuna.random_investment( level, n, d, False )
-			tuna.graphDataSet( stock_ticker, data, dates, level, n, d, tag )
+			tuna.graph_data_set( stock_ticker, data, dates, level, n, d, tag )
 
 		# choice == 7
 		# watch model make 10,000 prediction
