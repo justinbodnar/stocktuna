@@ -236,15 +236,13 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 3 is SMA50[0], SMA50[1], ...." )
 
-		# create historical dataset
-		processed_history = []
-		for i in range( 0, n ):
-			# calculate SMA50 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-50, j ):
-				summ += float(lines[k].split(",")[2])
-			processed_history.append( summ/50.0 )
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
+		# create dataset
+		processed_history = simple_moving_average( close_prices, 50 )
 
 	################
 	# data level 4 #
@@ -255,15 +253,13 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 4 is SMA200[0], SMA200[1], ...." )
 
-		# create historical dataset
-		processed_history = []
-		for i in range( 0, n ):
-			# calculate SMA200 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-200, j ):
-				summ += float(lines[k].split(",")[2])
-			processed_history.append( summ/200.0 )
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
+		# create dataset
+		processed_history = simple_moving_average( close_prices, 200 )
 
 	################
 	# data level 5 #
