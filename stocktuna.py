@@ -10,6 +10,8 @@ Functions:
 
 	print_tuna( )
 	print_exception( ) -> string
+	simple_average( list[float] ) -> float
+	simple_moving_average( list[floats], int ) -> list[float]
 	random_investment(int, int, int, boolean) -> string, 2dlist[string], list[string], float
 	create_data_set(int, int, int, int) -> 2dlist[string], list[float]
 	graph_data_set(string, 2dlist["string"], list[string], int, int, int, float)
@@ -84,6 +86,42 @@ def print_exception():
 	line = linecache.getline(filename, lineno, f.f_globals)
 	if errors:
 		return str('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
+
+def simple_average( data ):
+	'''
+	The simple average, or mean, is a number representing a list of numbers. It's calculated as the sum of the numbers divided by the number of values.
+		Parameters:
+			data(list[float]): data to process
+		Returns:
+			simple_average(float): the simple average of the data
+	'''
+	summ = 0.0
+	for i in range( len(data) ):
+		summ += data[i]
+	return summ/len(data)
+
+def simple_moving_average( data, periodicity ):
+	'''
+	A simple moving average (SMA) calculates the average of a selected range of prices, usually closing prices, by the number of periods in that range.
+                Parameters:
+			data(list[float]): data to process
+                Returns:
+                        simple_moving_average(list[float]): the simple moving average of the data for n-periodicity days. last value is the prediction for the day after the data ends
+	'''
+	# using an associative array to store summs decreases the number of computations by ~75%
+	summs = [0] * 2 * len(data)
+	sma = []
+	# iterate through input data
+	for i in range( len(data) ):
+		# put this value into the appropriate summs
+		# this varies with the periodocity
+		for j in range( periodicity ):
+			summs[i+j] += float(data[i])
+		# check if we should caluclate this number
+		if i >= periodicity-1:
+			sma.append( summs[i]/periodicity )
+	# return comopleted sma
+	return sma
 
 def random_investment( level, n, d, verbose ):
 	'''
@@ -181,15 +219,13 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 2 is SMA10[0], SMA10[1], ...." )
 
-		# create historical dataset
-		processed_history = []
-		for i in range( 0, n ):
-			# calculate SMA10 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-10, j ):
-				summ += float(lines[k].split(",")[2])
-			processed_history.append( summ/10.0 )
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
+		# create dataset
+		processed_history = simple_moving_average( close_prices, 10 )
 
 	################
 	# data level 3 #
@@ -395,7 +431,6 @@ def create_data_set(level, size, n, d):
 	# lets get a few random trades and see how we make out
 	i = 0
 	while len(data) < size:
-
 		# try to extract a random data point
 		try:
 			stock_ticker, data_point, dates, tag = random_investment( level, n, d, False )
@@ -408,6 +443,7 @@ def create_data_set(level, size, n, d):
 
 		# print errors:
 		except Exception as e:
+#			print( e )
 			pass
 
 	# save data sets
@@ -435,7 +471,6 @@ def graph_data_set(stock_ticker, data, dates, level, n, d, tags):
 			n (int): the number of days of history per data point
 			d (int): the number of days the stock was held before selling
 			tags list[float]: list of tags, associative with data set
-			
 	'''
 	global errors
 
