@@ -12,6 +12,7 @@ Functions:
 	print_exception( ) -> string
 	simple_average( list[float] ) -> float
 	simple_moving_average( list[floats], int ) -> list[float]
+	exponential_moving_average( list[float], int, float ) -> list[float]
 	random_investment(int, int, int, boolean) -> string, 2dlist[string], list[string], float
 	create_data_set(int, int, int, int) -> 2dlist[string], list[float]
 	graph_data_set(string, 2dlist["string"], list[string], int, int, int, float)
@@ -110,7 +111,8 @@ def simple_moving_average( data, periodicity ):
 	'''
 	# using an associative array to store summs decreases the number of computations by ~75%
 	summs = [0] * 2 * len(data)
-	sma = []
+	# pad sma array to reflect the lack of calculations on the first input values
+	sma = [0] * (periodicity-1)
 	# iterate through input data
 	for i in range( len(data) ):
 		# put this value into the appropriate summs
@@ -122,6 +124,32 @@ def simple_moving_average( data, periodicity ):
 			sma.append( summs[i]/periodicity )
 	# return comopleted sma
 	return sma
+
+def exponential_moving_average( data, periodicity, smoothing ):
+	'''
+	Calculates the exponential moving average of the input data set, returning a list
+		Parameters:
+			data(list[float]): the input data to process
+			periodicity(int): the period to process over
+			smoothing(float): the alpha to calculate with
+		Returns:
+			ema(list[float]): the list of ema values
+	'''
+	# decrease repeat calculations and increase code readability
+	p = periodicity
+	s = smoothing
+	s2 = 1.0 - s
+	# first get simple moving average
+	sma = simple_moving_average( data, p )
+	# to keep code/output readable, keep array associative to input via padding
+	ema = [0] * (p-1)
+	# start at i = periodicity - 1
+	ema.append( s * sma[p-2] + s2 * sma[p-3] )
+	# iterate through the rest
+	for i in range( periodicity, len(data) ):
+		ema.append( s* ema[i-1] + s2 * sma[i-2] )
+	# return ema array
+	return ema
 
 def random_investment( level, n, d, verbose ):
 	'''
@@ -270,21 +298,14 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 5 is EMA10[0], EMA10[1], ...." )
 
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
 		# create historical dataset
-		processed_history = []
-		last_ema10 = float(lines[start-10].split(",")[2])
-		k_constant = 2.0 / ( float(n) + 1.0 )
-		for i in range( 0, n ):
-			# calculate EMA10 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-10, j ):
-				summ += float(lines[k].split(",")[2])
-			ema10 = summ/10.0
-			todays_price = float(lines[j].split(",")[2])
-			ema10 = (todays_price-last_ema10) * k_constant + last_ema10
-			last_ema10 = ema10
-			processed_history.append( ema10 )
+		smoothing = 2.0 / ( float(n) + 1.0 )
+		processed_history = exponential_moving_average( close_prices, 10, smoothing )
 
 	################
 	# data level 6 #
@@ -295,21 +316,14 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 6 is EMA50[0], EMA50[1], ...." )
 
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
 		# create historical dataset
-		processed_history = []
-		last_ema50 = float(lines[start-50].split(",")[2])
-		k_constant = 2.0 / ( float(n) + 1.0 )
-		for i in range( 0, n ):
-			# calculate EMA50 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-50, j ):
-				summ += float(lines[k].split(",")[2])
-			ema10 = summ/50.0
-			todays_price = float(lines[j].split(",")[2])
-			ema50 = (todays_price-last_ema50) * k_constant + last_ema50
-			last_ema50 = ema50
-			processed_history.append( ema50 )
+		smoothing = 2.0 / ( float(n) + 1.0 )
+		processed_history = exponential_moving_average( close_prices, 50, smoothing )
 
 	################
 	# data level 7 #
@@ -320,21 +334,15 @@ def random_investment( level, n, d, verbose ):
 		if verbose:
 			print( "data level 7 is EMA200[0], EMA200[1], ...." )
 
+		# get close prices
+		close_prices = []
+		for candle in raw_history:
+			close_prices.append( candle.split(",")[2] )
+
 		# create historical dataset
-		processed_history = []
-		last_ema200 = float(lines[start-200].split(",")[2])
-		k_constant = 2.0 / ( float(n) + 1.0 )
-		for i in range( 0, n ):
-			# calculate EMA200 for this day
-			j = start+i
-			summ = 0.0
-			for k in range( j-200, j ):
-				summ += float(lines[k].split(",")[2])
-			ema200 = summ/200.0
-			todays_price = float(lines[j].split(",")[2])
-			ema200 = (todays_price-last_ema200) * k_constant + last_ema200
-			last_ema200 = ema200
-			processed_history.append( ema200 )
+		smoothing = 2.0 / ( float(n) + 1.0 )
+		processed_history = exponential_moving_average( close_prices, 200, smoothing )
+
 
 	################
 	# data level 8 #
