@@ -1,4 +1,5 @@
 stocktuna.pyc
+auth.py
 *.cred
 __pycache__/*
 kaggle-stock-etf-dataset/*
