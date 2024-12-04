@@ -1,7 +1,3 @@
 stocktuna.pyc
-auth.py
-*.cred
+api_auth.py
 __pycache__/*
-kaggle-stock-etf-dataset/*
-models/*
-datasets/*
