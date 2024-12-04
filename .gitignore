@@ -1,3 +1,11 @@
-stocktuna.pyc
+# Ignore compiled files
+*.pyc
+__pycache__/
+
+# Ignore environment files
+.env
+venv/
+env/
+
+# Ignore any file named api_auth.py regardless of its location
 api_auth.py
-__pycache__/*
