@@ -1,9 +1,0 @@
-README.md
-setup.py
-stocktuna/__init__.py
-stocktuna/stocktuna.py
-stocktuna.egg-info/PKG-INFO
-stocktuna.egg-info/SOURCES.txt
-stocktuna.egg-info/dependency_links.txt
-stocktuna.egg-info/requires.txt
-stocktuna.egg-info/top_level.txt
