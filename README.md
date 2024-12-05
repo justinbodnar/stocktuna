@@ -10,6 +10,7 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 
 ### Features of StockTuna
 
+- **Paper and Live Trading Modes**: Two subclasses (`PaperTuna` and `LiveTuna`) make it easy to switch between paper trading and live trading.
 - **Alpaca API Integration**: Direct access to real-time and historical market data via Alpaca.
 - **Advanced Data Analysis**: Tools for comprehensive analysis, including trend identification and predictive modeling.
 - **Customizable Framework**: Easily adaptable to fit specific analytical needs or market conditions.
@@ -27,16 +28,15 @@ Follow these steps to set up and start using StockTuna:
 2. **Install Dependencies**:
    Install the required dependencies by running:
    ```bash
-   pip install -e .
+   pip install .
    ```
-   This installs the package in editable mode, so any changes you make to the source files will be reflected immediately.
 
 3. **Set Up API Credentials**:
    StockTuna requires an Alpaca API key and secret to access market data. You have two options:
    - **Option 1**: Directly provide credentials in your code. Example:
      ```python
-     from stocktuna.stocktuna import StockTuna
-     tuna = StockTuna(alpaca_key='your_alpaca_key', alpaca_secret='your_alpaca_secret', verbosity=2)
+     from stocktuna.stocktuna import PaperTuna
+     tuna = PaperTuna(alpaca_key='your_alpaca_key', alpaca_secret='your_alpaca_secret', verbosity=2)
      ```
    - **Option 2**: Use a local `api_auth.py` file:
      - Rename `examples/api_auth_template.py` to `api_auth.py`.
@@ -48,7 +48,7 @@ Follow these steps to set up and start using StockTuna:
    cd examples
    python3 example.py
    ```
-   This script demonstrates how to use the library to pull historical stock data and visualize SMA (Simple Moving Average) for various periods.
+   This script demonstrates how to use the library to pull historical stock data and visualize SMA (Simple Moving Average) for various periods. The default example uses the `PaperTuna` subclass for paper trading.
 
 ### Prerequisites
 
