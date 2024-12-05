@@ -4,6 +4,18 @@ from datetime import datetime
 import os
 import importlib.util
 
+class PaperTuna:
+	def __init__(self, alpaca_key=None, alpaca_secret=None, verbosity=1):
+		"""Initialize the PaperTuna object for paper trading."""
+		self.stocktuna = StockTuna(alpaca_key, alpaca_secret, verbosity)
+		self.stocktuna.api = self.stocktuna.get_api_connection(base_url='https://paper-api.alpaca.markets')
+
+class LiveTuna:
+	def __init__(self, alpaca_key=None, alpaca_secret=None, verbosity=1):
+		"""Initialize the LiveTuna object for live trading."""
+		self.stocktuna = StockTuna(alpaca_key, alpaca_secret, verbosity)
+		self.stocktuna.api = self.stocktuna.get_api_connection(base_url='https://api.alpaca.markets')
+
 class StockTuna:
 	def __init__(self, alpaca_key=None, alpaca_secret=None, verbosity=1):
 		"""Initialize the StockTuna object with Alpaca credentials and verbosity level."""
@@ -21,7 +33,7 @@ class StockTuna:
 		if self.alpaca_key is None or self.alpaca_secret is None:
 			current_directory = os.getcwd()  # Get the current working directory
 			api_auth_path = os.path.join(current_directory, "api_auth.py")
-			
+
 			if os.path.exists(api_auth_path):
 				if verbosity > 0:
 					print(f"'api_auth.py' found in directory: {current_directory}. Loading credentials from file...")
@@ -30,7 +42,7 @@ class StockTuna:
 				spec.loader.exec_module(api_auth)
 				self.alpaca_key = getattr(api_auth, 'alpaca_key', None)
 				self.alpaca_secret = getattr(api_auth, 'alpaca_secret', None)
-				
+
 				if verbosity > 0:
 					if self.alpaca_key and self.alpaca_secret:
 						print("API credentials successfully loaded from 'api_auth.py'.")
@@ -42,17 +54,15 @@ class StockTuna:
 			raise ValueError("Alpaca API key and secret must be provided either through the constructor or in 'api_auth.py' located in the current script's directory.")
 
 		self.verbosity = verbosity
-		self.api = self.get_api_connection()
 
-	def get_api_connection(self):
+	def get_api_connection(self, base_url='https://paper-api.alpaca.markets'):
 		"""Return Alpaca API connection."""
-		BASE_URL = 'https://paper-api.alpaca.markets'
 		if self.verbosity > 0:
-			print(f"\nConnecting to Alpaca API using base URL: {BASE_URL}")
+			print(f"\nConnecting to Alpaca API using base URL: {base_url}")
 			print(f"Using Alpaca Key: {self.alpaca_key[:4]}... (redacted for security)")
 
-		api = tradeapi.REST(self.alpaca_key, self.alpaca_secret, BASE_URL, api_version='v2')
-		
+		api = tradeapi.REST(self.alpaca_key, self.alpaca_secret, base_url, api_version='v2')
+
 		if self.verbosity > 0:
 			print("API connection complete.")
 		return api
