@@ -72,26 +72,90 @@ class StockTuna:
 		if len(bars) < period:
 			raise ValueError(f"Not enough data to calculate the {period}-period SMA. Need at least {period} bars.")
 		closes = [bar.c for bar in bars]
-		sma_values = [sum(closes[i - period + 1:i + 1]) / period for i in range(period - 1, len(closes))]
-		return sma_values
 
-	def save_closing_prices_and_sma_plot(self, bars, period, symbol, filename=None):
-		"""Save plot of closing prices and SMA."""
-		if filename is None:
-			filename = f'charts/{symbol}_closing_prices_sma{period}_plot.png'
+		# Efficient rolling sum to calculate SMA
+		sma_values = []
+		rolling_sum = sum(closes[:period])
+		sma_values.append(rolling_sum / period)
+
+		for i in range(period, len(closes)):
+			rolling_sum = rolling_sum - closes[i - period] + closes[i]
+			sma_values.append(rolling_sum / period)
+
+		return [None] * (period - 1) + sma_values
+
+	def rsi(self, bars, period=14):
+		"""Relative Strength Index (RSI) calculation."""
+		if len(bars) < period:
+			raise ValueError(f"Not enough data to calculate the {period}-period RSI. Need at least {period} bars.")
+		closes = [bar.c for bar in bars]
+
+		gains = []
+		losses = []
+
+		# Calculate initial average gain and loss
+		for i in range(1, period + 1):
+			change = closes[i] - closes[i - 1]
+			if change > 0:
+				gains.append(change)
+			else:
+				losses.append(abs(change))
+
+		avg_gain = sum(gains) / period
+		avg_loss = sum(losses) / period if losses else 1  # To prevent division by zero
+
+		# Initialize RSI values list
+		rsi_values = []
+
+		# Calculate RSI for the first 'period'
+		rs = avg_gain / avg_loss if avg_loss != 0 else 0
+		rsi_values.append(100 - (100 / (1 + rs)))
+
+		# Calculate RSI for subsequent bars
+		for i in range(period + 1, len(closes)):
+			change = closes[i] - closes[i - 1]
+			gain = max(change, 0)
+			loss = abs(min(change, 0))
+
+			avg_gain = ((avg_gain * (period - 1)) + gain) / period
+			avg_loss = ((avg_loss * (period - 1)) + loss) / period
+
+			rs = avg_gain / avg_loss if avg_loss != 0 else 0
+			rsi_value = 100 - (100 / (1 + rs))
+			rsi_values.append(rsi_value)
+
+		return rsi_values
+
+	def save_closing_prices_and_indicators_plot(self, bars, sma_periods, rsi_period, symbol, filename='chart.png'):
+		"""Save plot of closing prices, SMA, and RSI."""
 		closes = [bar.c for bar in bars]
 		dates = [bar.t.strftime("%Y-%m-%d") for bar in bars]
-		sma_values = self.sma(bars, period)
-		plt.figure(figsize=(10, 6))
+
+		# Calculate SMAs and RSI
+		sma_values = {period: self.sma(bars, period) for period in sma_periods}
+		rsi_values = self.rsi(bars, rsi_period)
+
+		# Create the plot
+		plt.figure(figsize=(14, 8))
+
+		# Plot closing prices
 		plt.plot(dates, closes, label='Closing Prices', color='blue')
-		plt.plot(dates[len(dates) - len(sma_values):], sma_values, label=f'SMA{period}', color='orange')
+
+		# Plot SMAs
+		for period, values in sma_values.items():
+			plt.plot(dates[len(dates) - len(values):], values, label=f'SMA {period}', linestyle='--')
+
+		# Plot RSI in a separate subplot
+		plt.plot(dates[len(dates) - len(rsi_values):], rsi_values, label=f'RSI {rsi_period}', color='green')
+
 		plt.xlabel('Date')
-		plt.ylabel('Price')
-		plt.title(f'{symbol} Closing Prices and SMA{period} Over Time')
+		plt.ylabel('Price / Indicator Value')
+		plt.title(f'{symbol} Closing Prices with Indicators')
 		plt.xticks(rotation=45)
 		plt.legend()
 		plt.tight_layout()
 		plt.savefig(filename)
 		plt.close()
+
 		if self.verbosity > 0:
 			print(f"Plot saved as {filename}")

@@ -12,8 +12,22 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 
 - **Paper and Live Trading Modes**: Two subclasses (`PaperTuna` and `LiveTuna`) make it easy to switch between paper trading and live trading.
 - **Alpaca API Integration**: Direct access to real-time and historical market data via Alpaca.
+- **Indicator Functions**: Includes functions for calculating **Simple Moving Average (SMA)** and **Relative Strength Index (RSI)**.
 - **Advanced Data Analysis**: Tools for comprehensive analysis, including trend identification and predictive modeling.
-- **Customizable Framework**: Easily adaptable to fit specific analytical needs or market conditions.
+
+### Available Classes and Functions
+
+- **PaperTuna**: Initializes a `PaperTuna` object for paper trading using Alpaca's paper trading API.
+- **LiveTuna**: Initializes a `LiveTuna` object for live trading using Alpaca's live trading API.
+- **StockTuna**: The core class that handles API connection and provides utility functions for data analysis.
+  - **`get_api_connection(base_url)`**: Establishes a connection to the Alpaca API using provided credentials.
+  - **`sma(bars, period)`**: Calculates the Simple Moving Average (SMA) over a specified period.
+  - **`rsi(bars, period)`**: Calculates the Relative Strength Index (RSI) for the given period.
+  - **`save_closing_prices_and_indicators_plot(bars, sma_periods, rsi_period, symbol, filename)`**: Saves a plot of closing prices, SMAs, and RSI to visualize stock trends.
+
+### Example: Moving Average Crossover Strategy
+
+The repository includes an example file called `moving_average_crossover_strategy.py`. This script demonstrates the use of `PaperTuna` to fetch historical stock data, calculate SMA values, and identify buy/sell signals based on a moving average crossover strategy. The script also generates and saves a chart showing the stock's closing prices along with buy/sell indicators and SMAs.
 
 ## Get Started
 
@@ -43,12 +57,12 @@ Follow these steps to set up and start using StockTuna:
      - Add your Alpaca API credentials to the file.
 
 4. **Run the Example**:
-   Navigate to the `examples/` directory and run `example.py` to see how to use StockTuna to fetch data and generate SMA plots:
+   Navigate to the `examples/` directory and run `moving_average_crossover_strategy.py` to see how to use StockTuna to fetch data and generate SMA plots:
    ```bash
    cd examples
-   python3 example.py
+   python3 moving_average_crossover_strategy.py
    ```
-   This script demonstrates how to use the library to pull historical stock data and visualize SMA (Simple Moving Average) for various periods. The default example uses the `PaperTuna` subclass for paper trading.
+   This script demonstrates how to use the library to pull historical stock data, calculate moving averages, and visualize them along with buy and sell signals. The default example uses the `PaperTuna` subclass for paper trading.
 
 ### Prerequisites
 
@@ -62,3 +76,4 @@ Follow these steps to set up and start using StockTuna:
 ## About the Author
 
 Justin Bodnar is the developer behind StockTuna. For more information about his work or to get in touch, visit [justinbodnar.com](http://justinbodnar.com) or send an email to [contact@justinbodnar.com](mailto:contact@justinbodnar.com).
+
