@@ -13,10 +13,11 @@ symbol = "GME"
 
 # Set the timeframe for the historical data and start date
 timeframe = TimeFrame.Day
-start_date = (datetime.now() - timedelta(days=500)).strftime('%Y-%m-%d')
+start_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
 
 # Fetch historical data for the specified symbol using the PaperTuna API
 bars = tuna.stocktuna.api.get_bars(symbol, timeframe, start=start_date, limit=500)
+print("Trading days gathered:",len(bars))
 
 # Set parameters for indicators
 short_period = 5  # Short-term SMA for faster trend detection
@@ -46,13 +47,13 @@ for i in range(long_period, len(bars)):
 			sell_signals.append(bars[i].t.strftime('%Y-%m-%d'))
 
 # Print Buy/Sell Signals
-print("Buy Signals:")
-for buy_signal in buy_signals:
-	print(buy_signal)
+#print("Buy Signals:")
+#for buy_signal in buy_signals:
+#	print(buy_signal)
 
-print("\nSell Signals:")
-for sell_signal in sell_signals:
-	print(sell_signal)
+#print("\nSell Signals:")
+#for sell_signal in sell_signals:
+#	print(sell_signal)
 
 # Plotting Buy/Sell Signals along with Closing Prices and SMAs
 dates = [bar.t.strftime('%Y-%m-%d') for bar in bars]
@@ -95,3 +96,54 @@ plt.close()
 
 print("Chart saved as 'charts/chart.png'")
 
+# Initialize variables for paper trading
+cash_balance = 100000  # Starting with $100,000
+position = 0  # Initial position (number of shares held)
+initial_cash_balance = cash_balance
+investment_value = 0  # Value of the current investments
+
+# Iterate through the bars to simulate paper trading
+def price_at_date(bars, date):
+	for bar in bars:
+		if bar.t.strftime('%Y-%m-%d') == date:
+			return bar.c
+	return None
+
+def find_bar_index(bars, date):
+	for idx, bar in enumerate(bars):
+		if bar.t.strftime('%Y-%m-%d') == date:
+			return idx
+	return -1
+
+# List of all transactions
+transactions = []
+
+date_idx = 0
+for date in dates:
+	if date in buy_signals:
+		price = closing_prices[date_idx]
+		shares_to_buy = cash_balance // price
+		if shares_to_buy > 0:
+			cash_balance -= shares_to_buy * price
+			position += shares_to_buy
+			investment_value = position * price
+			transactions.append((date, 'BUY', price, shares_to_buy, cash_balance + investment_value))
+	elif date in sell_signals and position > 0:
+		price = closing_prices[date_idx]
+		cash_balance += position * price
+		investment_value = 0
+		transactions.append((date, 'SELL', price, position, cash_balance))
+		position = 0
+	date_idx += 1
+
+# Print the transactions
+for date, action, price, qty, new_balance in transactions:
+	if action == "BUY":
+		print(f"{date}: Buy {qty} shares at ${price:.2f}, New Balance (Cash + Investment): ${new_balance:.2f}")
+	elif action == "SELL":
+		profit = round(qty * price - (qty * transactions[transactions.index((date, action, price, qty, new_balance)) - 1][2]), 2)
+		print(f"{date}: Sell {qty} shares at ${price:.2f}, New Balance: ${new_balance:.2f}, Profit: ${profit:.2f}")
+
+# Print the final value
+final_value = cash_balance + (position * closing_prices[-1])
+print(f"\nFinal Portfolio Value: ${final_value:.2f}")

@@ -88,35 +88,38 @@ class StockTuna:
 		"""Relative Strength Index (RSI) calculation."""
 		if len(bars) < period:
 			raise ValueError(f"Not enough data to calculate the {period}-period RSI. Need at least {period} bars.")
+
 		closes = [bar.c for bar in bars]
 
-		gains = []
-		losses = []
+		# Initialize gains and losses
+		total_gain = 0
+		total_loss = 0
 
-		# Calculate initial average gain and loss
-		for i in range(1, period + 1):
+		# Calculate initial average gain and loss for the first `period` bars
+		for i in range(1, period):
 			change = closes[i] - closes[i - 1]
 			if change > 0:
-				gains.append(change)
+				total_gain += change
 			else:
-				losses.append(abs(change))
+				total_loss += abs(change)
 
-		avg_gain = sum(gains) / period
-		avg_loss = sum(losses) / period if losses else 1  # To prevent division by zero
+		avg_gain = total_gain / (period - 1)
+		avg_loss = total_loss / (period - 1) if total_loss > 0 else 1e-10  # To prevent division by zero
 
 		# Initialize RSI values list
 		rsi_values = []
 
-		# Calculate RSI for the first 'period'
-		rs = avg_gain / avg_loss if avg_loss != 0 else 0
+		# Calculate RSI for the first `period`
+		rs = avg_gain / avg_loss
 		rsi_values.append(100 - (100 / (1 + rs)))
 
 		# Calculate RSI for subsequent bars
-		for i in range(period + 1, len(closes)):
+		for i in range(period, len(closes)):
 			change = closes[i] - closes[i - 1]
 			gain = max(change, 0)
 			loss = abs(min(change, 0))
 
+			# Update average gain and loss using the smoothed moving average formula
 			avg_gain = ((avg_gain * (period - 1)) + gain) / period
 			avg_loss = ((avg_loss * (period - 1)) + loss) / period
 

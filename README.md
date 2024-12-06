@@ -6,7 +6,7 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 
 ## About StockTuna
 
-**StockTuna** is a Python library currently in pre-alpha development, designed for processing stock market and securities historical data. It integrates seamlessly with the Alpaca API to provide users with real-time and historical market data, facilitating the development of sophisticated algorithmic trading strategies. Visit the official website at [stocktuna.com](http://stocktuna.com) for more information and resources.
+**StockTuna** is a Python library currently in pre-alpha development, designed for processing stock market and securities historical data. It integrates with the Alpaca API to provide users with real-time and historical market data, facilitating the development of sophisticated algorithmic trading strategies. Visit the official website at [stocktuna.com](http://stocktuna.com) for more information and resources.
 
 ### Features of StockTuna
 
