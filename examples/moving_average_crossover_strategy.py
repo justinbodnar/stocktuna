@@ -14,7 +14,7 @@ investment_time = 365
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')
 short_period = 5
 long_period = 10
-symbols = tuna.stocktuna.djia
+symbols = tuna.stocktuna.russell_2000
 
 # function to backtest current strategy
 def backtest(symbol):
@@ -117,7 +117,9 @@ for symbol in symbols:
 			gains += 1
 		summ += ret
 		count += 1
-		if verbosity > 1:
+		if verbosity is 1:
+			print(count,"of",total)
+		elif verbosity > 1:
 			print(f"{count}, {symbol}, Return: ${ret:,.2f}")
 	except Exception as e:
 		errors += 1

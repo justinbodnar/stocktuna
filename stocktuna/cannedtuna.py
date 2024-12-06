@@ -6,7 +6,7 @@
 	djia
 	nasdaq_100
 	s_and_p_500
-	russel_2000
+	russell_2000
 """
 
 nyse_fang = [
