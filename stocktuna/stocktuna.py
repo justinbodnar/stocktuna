@@ -1,8 +1,9 @@
 import alpaca_trade_api as tradeapi
 import matplotlib.pyplot as plt
 from datetime import datetime
-import os
 import importlib.util
+from . import cannedtuna
+import os
 
 class PaperTuna:
 	def __init__(self, alpaca_key=None, alpaca_secret=None, verbosity=1):
@@ -21,6 +22,11 @@ class StockTuna:
 		"""Initialize the StockTuna object with Alpaca credentials and verbosity level."""
 		self.alpaca_key = alpaca_key
 		self.alpaca_secret = alpaca_secret
+
+		# get cannedtuna.py data
+		for name, value in vars(cannedtuna).items():
+			if isinstance(value, list):
+				setattr(self, name, value)
 
 		# Verbosity level logging
 		if verbosity > 0:
