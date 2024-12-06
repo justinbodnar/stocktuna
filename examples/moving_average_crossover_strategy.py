@@ -133,10 +133,12 @@ else:
     percentage_gains = 0
     percentage_losses = 0
 
-# Output of backtesting
+# Output of backtesting 
 print(f"\nList length: {len(symbols)}")
 print(f"Errors: {errors}")
 print(f"Completed: {count}")
 print(f"Gains: {gains} - {percentage_gains:.2f}%")
 print(f"Losses: {losses} - {percentage_losses:.2f}%")
 print(f"Average return: ${average_return:,.2f}")
+percentage_change = ((average_return - 100000) / 100000) * 100
+print(f"Gain/Loss: {percentage_change:.2f}%")
