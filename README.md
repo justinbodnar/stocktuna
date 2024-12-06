@@ -13,7 +13,7 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 - **Paper and Live Trading Modes**: Two subclasses (`PaperTuna` and `LiveTuna`) make it easy to switch between paper trading and live trading.
 - **Alpaca API Integration**: Direct access to real-time and historical market data via Alpaca.
 - **Indicator Functions**: Includes functions for calculating **Simple Moving Average (SMA)** and **Relative Strength Index (RSI)**.
-- **Advanced Data Analysis**: Tools for comprehensive analysis, including trend identification and predictive modeling.
+- **Predefined Market Indices**: A `cannedtuna.py` file contains hardcoded lists of stock symbols for major market indices, such as the Dow Jones, NASDAQ 100, NYSE FANG, and S&P 500.
 
 ### Available Classes and Functions
 
@@ -23,11 +23,10 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
   - **`get_api_connection(base_url)`**: Establishes a connection to the Alpaca API using provided credentials.
   - **`sma(bars, period)`**: Calculates the Simple Moving Average (SMA) over a specified period.
   - **`rsi(bars, period)`**: Calculates the Relative Strength Index (RSI) for the given period.
-  - **`save_closing_prices_and_indicators_plot(bars, sma_periods, rsi_period, symbol, filename)`**: Saves a plot of closing prices, SMAs, and RSI to visualize stock trends.
 
 ### Example: Moving Average Crossover Strategy
 
-The repository includes an example file called `moving_average_crossover_strategy.py`. This script demonstrates the use of `PaperTuna` to fetch historical stock data, calculate SMA values, and identify buy/sell signals based on a moving average crossover strategy. The script also generates and saves a chart showing the stock's closing prices along with buy/sell indicators and SMAs.
+**`moving_average_crossover_strategy.py`**. demonstrates the use of PaperTuna to fetch historical stock data, calculate SMA values, and identify buy/sell signals based on a moving average crossover strategy. Using stock indices from cannedtuna.py, the script backtests the strategy with one year of historical data. It simulates trades using a $100,000 starting balance, tracks gains and losses, and calculates final portfolio performance, providing insight into the strategy’s effectiveness over time.
 
 ## Get Started
 

@@ -124,10 +124,19 @@ for symbol in symbols:
 		print(e)
 average_return = summ / count
 
-# output of backtesting
+# Calculate the total and percentages
+total = gains + losses
+if total > 0:
+    percentage_gains = (gains / total) * 100
+    percentage_losses = (losses / total) * 100
+else:
+    percentage_gains = 0
+    percentage_losses = 0
+
+# Output of backtesting
 print(f"\nList length: {len(symbols)}")
 print(f"Errors: {errors}")
 print(f"Completed: {count}")
-print(f"Gains: {gains}")
-print(f"Losses: {losses}")
+print(f"Gains: {gains} - {percentage_gains:.2f}%")
+print(f"Losses: {losses} - {percentage_losses:.2f}%")
 print(f"Average return: ${average_return:,.2f}")
