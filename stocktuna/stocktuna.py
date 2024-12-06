@@ -134,37 +134,3 @@ class StockTuna:
 			rsi_values.append(rsi_value)
 
 		return rsi_values
-
-	def save_closing_prices_and_indicators_plot(self, bars, sma_periods, rsi_period, symbol, filename='chart.png'):
-		"""Save plot of closing prices, SMA, and RSI."""
-		closes = [bar.c for bar in bars]
-		dates = [bar.t.strftime("%Y-%m-%d") for bar in bars]
-
-		# Calculate SMAs and RSI
-		sma_values = {period: self.sma(bars, period) for period in sma_periods}
-		rsi_values = self.rsi(bars, rsi_period)
-
-		# Create the plot
-		plt.figure(figsize=(14, 8))
-
-		# Plot closing prices
-		plt.plot(dates, closes, label='Closing Prices', color='blue')
-
-		# Plot SMAs
-		for period, values in sma_values.items():
-			plt.plot(dates[len(dates) - len(values):], values, label=f'SMA {period}', linestyle='--')
-
-		# Plot RSI in a separate subplot
-		plt.plot(dates[len(dates) - len(rsi_values):], rsi_values, label=f'RSI {rsi_period}', color='green')
-
-		plt.xlabel('Date')
-		plt.ylabel('Price / Indicator Value')
-		plt.title(f'{symbol} Closing Prices with Indicators')
-		plt.xticks(rotation=45)
-		plt.legend()
-		plt.tight_layout()
-		plt.savefig(filename)
-		plt.close()
-
-		if self.verbosity > 0:
-			print(f"Plot saved as {filename}")
