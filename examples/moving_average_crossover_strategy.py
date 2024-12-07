@@ -14,9 +14,14 @@ investment_time = 365
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')
 short_period = 5
 long_period = 10
-symbols = tuna.stocktuna.russell_2000
+symbol = "AA"
 
-# function to backtest current strategy
+"""
+function to backtest current strategy
+
+takes a stock symbol, and backtests the past year worth of price data
+returns the percentage difference after the tested year
+"""
 def backtest(symbol):
 	# Fetch historical data for the specified symbol using the PaperTuna API
 	bars = tuna.stocktuna.api.get_bars(symbol, timeframe, start=start_date, limit=500)
@@ -48,7 +53,7 @@ def backtest(symbol):
 	closing_prices = [bar.c for bar in bars]
 
 	# Initialize variables for paper trading
-	cash_balance = 100000  # Starting with $100,000
+	original_cash_balance = cash_balance = 100000  # Starting with $100,000
 	position = 0  # Initial position (number of shares held)
 	initial_cash_balance = cash_balance
 	investment_value = 0  # Value of the current investments
@@ -100,47 +105,15 @@ def backtest(symbol):
 
 		# Print the final value
 		print(f"\nFinal Portfolio Value: ${final_value:.2f}")
-	return final_value
+	return "{:.2f}".format((((final_value - original_cash_balance) / original_cash_balance) * 100))
 
-summ = 0.0
-count = 0
-errors = 0
-gains = 0
-losses = 0
-total = len(symbols)
-for symbol in symbols:
-	try:
-		ret = backtest(symbol)
-		if ret <= 100000:
-			losses +=1
-		else:
-			gains += 1
-		summ += ret
-		count += 1
-		if verbosity is 1:
-			print(count,"of",total)
-		elif verbosity > 1:
-			print(f"{count}, {symbol}, Return: ${ret:,.2f}")
-	except Exception as e:
-		errors += 1
-		print(e)
-average_return = summ / count
-
-# Calculate the total and percentages
-total = gains + losses
-if total > 0:
-    percentage_gains = (gains / total) * 100
-    percentage_losses = (losses / total) * 100
-else:
-    percentage_gains = 0
-    percentage_losses = 0
-
-# Output of backtesting 
-print(f"\nList length: {len(symbols)}")
-print(f"Errors: {errors}")
-print(f"Completed: {count}")
-print(f"Gains: {gains} - {percentage_gains:.2f}%")
-print(f"Losses: {losses} - {percentage_losses:.2f}%")
-print(f"Average return: ${average_return:,.2f}")
-percentage_change = ((average_return - 100000) / 100000) * 100
-print(f"Gain/Loss: {percentage_change:.2f}%")
+# run the backtest
+final_value = backtest(symbol)
+print("\nBacktesting $100,00 with the following settings:")
+print("Timeframe:",timeframe)
+print("Investment Time:",investment_time)
+print("Start Date:",start_date)
+print("Short SMA:",short_period)
+print("Long SMA:",long_period)
+print("Stock Ticker:",symbol)
+print("\nFinal Value:",final_value)
