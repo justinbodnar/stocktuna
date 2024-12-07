@@ -7,6 +7,7 @@ __pycache__/
 .env
 venv/
 env/
+.idea
 
 # Ignore any file named api_auth.py regardless of its location
 api_auth.py
