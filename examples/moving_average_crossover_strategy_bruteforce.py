@@ -9,9 +9,9 @@ import matplotlib.ticker as mtick
 # config
 verbosity = 1
 tuna = PaperTuna(verbosity)
-index = tuna.stocktuna.nyse_fang
-short_period_range = range(1, 10)
-long_period_range = range(1, 10)
+index = tuna.stocktuna.russell_2000
+short_period_range = range(1, 30)
+long_period_range = range(1, 30)
 timeframe = TimeFrame.Day
 investment_time = 365
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')
@@ -25,7 +25,6 @@ returns the percentage difference after the tested year
 def backtest(symbol):
 	# Fetch historical data for the specified symbol using the PaperTuna API
 	bars = tuna.stocktuna.api.get_bars(symbol, timeframe, start=start_date, limit=500)
-
 	# Calculate SMA values
 	sma_short_values = tuna.stocktuna.sma(bars, short_period)
 	sma_long_values = tuna.stocktuna.sma(bars, long_period)
@@ -153,6 +152,7 @@ for short_period in short_period_range:
 		tests_run += 1
 		progress = (tests_run / total_combinations) * 100
 		print(f"Progress: {tests_run}/{total_combinations} tests run ({progress:.2f}%)")
+		print(f"\nHighest Average: {highest_avg:.2f}% with parameters short_period={best_params[0]}, long_period={best_params[1]}")
 
 # Print the results
 print(f"\nHighest Average: {highest_avg:.2f}% with parameters short_period={best_params[0]}, long_period={best_params[1]}")

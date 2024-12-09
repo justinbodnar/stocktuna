@@ -11,5 +11,5 @@ Below are the best-performing \( x \) and \( y \) values for each stock index, a
 | NYSE Fang         |        1, 3        |    25.30%    |
 | DJIA              |        3, 4        |    7.87%     |
 | NASDAQ 100        |       17, 21       |    10.83%    |
-| S&P 500           |        0, 0        |    0.00%     |
+| S&P 500           |       24, 25       |    9.40%     |
 | Russell 2000      |        0, 0        |    0.00%     |
