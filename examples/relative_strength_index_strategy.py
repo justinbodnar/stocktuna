@@ -12,9 +12,8 @@ tuna = PaperTuna(verbosity)
 timeframe = TimeFrame.Day
 investment_time = 365
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')
-short_period = 5
-long_period = 10
-symbol = "AA"
+rsi_period = 5
+symbol = "GME"
 
 """
 function to backtest current strategy
@@ -25,31 +24,19 @@ returns the percentage difference after the tested year
 def backtest(symbol):
 	# Fetch historical data for the specified symbol using the PaperTuna API
 	bars = tuna.stocktuna.api.get_bars(symbol, timeframe, start=start_date, limit=500)
+	tuna.stocktuna.rsi_graph(bars,rsi_period,symbol)
+	# Calculate RSI values
+	rsi_values = tuna.stocktuna.rsi(bars, rsi_period)
 
-	# generate graph for visual confirmation
-	tuna.stocktuna.sma_graph(bars,[short_period,long_period],symbol)
-
-	# Calculate SMA values
-	sma_short_values = tuna.stocktuna.sma(bars, short_period)
-	sma_long_values = tuna.stocktuna.sma(bars, long_period)
-
-	# Ensure SMA values have the same length as dates
-	sma_short_values_full = [None] * (len(bars) - len(sma_short_values)) + sma_short_values
-	sma_long_values_full = [None] * (len(bars) - len(sma_long_values)) + sma_long_values
-
-	# Identify Buy/Sell Signals using Moving Average Crossover
+	# Identify Buy/Sell Signals using Relative Strength Index
 	buy_signals = []
 	sell_signals = []
 
-	for i in range(long_period, len(bars)):
-		# Ensure values are not None before comparison
-		if sma_short_values_full[i] is not None and sma_long_values_full[i] is not None and sma_short_values_full[i - 1] is not None and sma_long_values_full[i - 1] is not None:
-			# Moving Average Crossover Strategy for Buy/Sell Signals
-			if sma_short_values_full[i] > sma_long_values_full[i] and sma_short_values_full[i - 1] <= sma_long_values_full[i - 1]:
-				# Buy when short SMA crosses above long SMA
+	for i in range(rsi_period, len(rsi_values)):
+		if rsi_values[i] is not None:
+			if rsi_values[i] < 30:  # Oversold condition
 				buy_signals.append(bars[i].t.strftime('%Y-%m-%d'))
-			elif sma_short_values_full[i] < sma_long_values_full[i] and sma_short_values_full[i - 1] >= sma_long_values_full[i - 1]:
-				# Sell when short SMA crosses below long SMA
+			elif rsi_values[i] > 70:  # Overbought condition
 				sell_signals.append(bars[i].t.strftime('%Y-%m-%d'))
 
 	dates = [bar.t.strftime('%Y-%m-%d') for bar in bars]
@@ -116,7 +103,6 @@ print("\nBacktesting $100,00 with the following settings:")
 print("Timeframe:",timeframe)
 print("Investment Time:",investment_time)
 print("Start Date:",start_date)
-print("Short SMA:",short_period)
-print("Long SMA:",long_period)
+print("RSI Period:",rsi_period)
 print("Stock Ticker:",symbol)
 print("\nBalance Change: "+str(final_value)+"%")
