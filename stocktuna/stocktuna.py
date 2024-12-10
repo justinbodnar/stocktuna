@@ -90,6 +90,47 @@ class StockTuna:
 
 		return [None] * (period - 1) + sma_values
 
+	def sma_graph(self, bars, periods, symbol):
+		"""Generate and save a graph of price data and SMAs for given periods."""
+		# Extract closing prices and dates
+		closes = [bar.c for bar in bars]
+		dates = [bar.t for bar in bars]
+
+		# Calculate SMAs for each period
+		sma_data = {}
+		for period in periods:
+			sma_data[period] = self.sma(bars, period)
+
+		# Plot the closing prices
+		plt.figure(figsize=(12, 6))
+		plt.plot(dates, closes, label="Price", linewidth=1.5)
+
+		# Plot each SMA
+		for period, sma_values in sma_data.items():
+			plt.plot(dates, sma_values, label=f"SMA {period}", linestyle='--')
+
+		# Add labels, title, and legend
+		plt.title(f"Price and SMAs for {symbol}", fontsize=16)
+		plt.xlabel("Date", fontsize=12)
+		plt.ylabel("Price", fontsize=12)
+		plt.legend()
+		plt.grid(True)
+
+		# Prepare the filename
+		period_str = "_".join(map(str, periods))
+		filename = f"charts/{period_str}_{symbol}_chart.png"
+
+		# Create the charts directory if it doesn't exist
+		os.makedirs("charts", exist_ok=True)
+
+		# Save the chart
+		plt.savefig(filename)
+		plt.close()
+
+		# Log the saved file
+		if self.verbosity > 0:
+			print(f"Chart saved to {filename}")
+
 	def rsi(self, bars, period=14):
 		"""Relative Strength Index (RSI) calculation."""
 		if len(bars) < period:
@@ -134,3 +175,49 @@ class StockTuna:
 			rsi_values.append(rsi_value)
 
 		return rsi_values
+
+	def rsi_graph(self, bars, period, symbol):
+		"""Generate and save a graph of RSI values and price data for a given period."""
+		# Extract dates, prices, and RSI values
+		dates = [bar.t for bar in bars]
+		prices = [bar.c for bar in bars]
+		rsi_values = self.rsi(bars, period)
+
+		# Create the figure and axes
+		fig, ax1 = plt.subplots(figsize=(12, 6))
+
+		# Plot price data on the primary y-axis
+		ax1.plot(dates, prices, label="Price", color='black', linewidth=1.5)
+		ax1.set_xlabel("Date", fontsize=12)
+		ax1.set_ylabel("Price", fontsize=12, color='black')
+		ax1.tick_params(axis='y', labelcolor='black')
+
+		# Plot RSI values on a secondary y-axis
+		ax2 = ax1.twinx()
+		ax2.plot(dates[period-1:], rsi_values, label=f"RSI {period}", color='blue', linewidth=1.5)
+		ax2.axhline(70, color='red', linestyle='--', linewidth=1, label="Overbought (70)")
+		ax2.axhline(30, color='green', linestyle='--', linewidth=1, label="Oversold (30)")
+		ax2.set_ylabel("RSI", fontsize=12, color='blue')
+		ax2.tick_params(axis='y', labelcolor='blue')
+
+		# Add title and legends
+		plt.title(f"RSI ({period}) and Price for {symbol}", fontsize=16)
+		ax1.legend(loc="upper left")
+		ax2.legend(loc="upper right")
+
+		# Grid and formatting
+		plt.grid(True)
+
+		# Prepare the filename
+		filename = f"charts/rsi_{period}_{symbol}_chart.png"
+
+		# Create the charts directory if it doesn't exist
+		os.makedirs("charts", exist_ok=True)
+
+		# Save the chart
+		plt.savefig(filename)
+		plt.close()
+
+		# Log the saved file
+		if self.verbosity > 0:
+			print(f"RSI chart with price data saved to {filename}")

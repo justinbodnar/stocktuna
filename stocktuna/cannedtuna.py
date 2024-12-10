@@ -5,7 +5,6 @@
 	nyse_fang
 	djia
 	nasdaq_100
-	s_and_p_500
 	russell_2000
 """
 
