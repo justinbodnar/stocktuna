@@ -118,7 +118,68 @@ class StockTuna:
 
 		# Prepare the filename
 		period_str = "_".join(map(str, periods))
-		filename = f"charts/{period_str}_{symbol}_chart.png"
+		filename = f"charts/sma_{period_str}_{symbol}_chart.png"
+
+		# Create the charts directory if it doesn't exist
+		os.makedirs("charts", exist_ok=True)
+
+		# Save the chart
+		plt.savefig(filename)
+		plt.close()
+
+		# Log the saved file
+		if self.verbosity > 0:
+			print(f"Chart saved to {filename}")
+
+	def ema(self, bars, period):
+		"""Exponential Moving Average (EMA) calculation."""
+		if len(bars) < period:
+			raise ValueError(f"Not enough data to calculate the {period}-period EMA. Need at least {period} bars.")
+		closes = [bar.c for bar in bars]
+
+		# Calculate the multiplier for weighting the EMA
+		multiplier = 2 / (period + 1)
+
+		# Start by using the first period's SMA as the initial EMA value
+		initial_ema = sum(closes[:period]) / period
+		ema_values = [initial_ema]
+
+		# Use the formula to calculate EMA for the rest
+		for i in range(period, len(closes)):
+			current_ema = (closes[i] - ema_values[-1]) * multiplier + ema_values[-1]
+			ema_values.append(current_ema)
+
+		return [None] * (period - 1) + ema_values
+
+	def ema_graph(self, bars, periods, symbol):
+		"""Generate and save a graph of price data and EMAs for given periods."""
+		# Extract closing prices and dates
+		closes = [bar.c for bar in bars]
+		dates = [bar.t for bar in bars]
+
+		# Calculate EMAs for each period
+		ema_data = {}
+		for period in periods:
+			ema_data[period] = self.ema(bars, period)
+
+		# Plot the closing prices
+		plt.figure(figsize=(12, 6))
+		plt.plot(dates, closes, label="Price", linewidth=1.5)
+
+		# Plot each EMA
+		for period, ema_values in ema_data.items():
+			plt.plot(dates, ema_values, label=f"EMA {period}", linestyle='--')
+
+		# Add labels, title, and legend
+		plt.title(f"Price and EMAs for {symbol}", fontsize=16)
+		plt.xlabel("Date", fontsize=12)
+		plt.ylabel("Price", fontsize=12)
+		plt.legend()
+		plt.grid(True)
+
+		# Prepare the filename
+		period_str = "_".join(map(str, periods))
+		filename = f"charts/ema_{period_str}_{symbol}_chart.png"
 
 		# Create the charts directory if it doesn't exist
 		os.makedirs("charts", exist_ok=True)
