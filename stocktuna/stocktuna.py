@@ -109,6 +109,30 @@ class StockTuna:
 		for period, sma_values in sma_data.items():
 			plt.plot(dates, sma_values, label=f"SMA {period}", linestyle='--')
 
+		# Assuming you have at least two periods in 'periods' list and sma_data contains valid data
+		if len(periods) >= 2:
+			buy_signals = []
+			sell_signals = []
+			for i in range(1, len(dates)):
+				# Skip the loop iteration if any SMA value is None
+				if sma_data[periods[0]][i] is None or sma_data[periods[1]][i] is None or \
+						sma_data[periods[0]][i - 1] is None or sma_data[periods[1]][i - 1] is None:
+					continue
+
+				# Check for crossover to determine buy/sell signals
+				if (sma_data[periods[0]][i] > sma_data[periods[1]][i] and
+						sma_data[periods[0]][i - 1] <= sma_data[periods[1]][i - 1]):
+					buy_signals.append(dates[i])
+				elif (sma_data[periods[0]][i] < sma_data[periods[1]][i] and
+					  sma_data[periods[0]][i - 1] >= sma_data[periods[1]][i - 1]):
+					sell_signals.append(dates[i])
+
+		# Plot buy and sell signals
+		for date in buy_signals:
+			plt.scatter(date, closes[dates.index(date)], color='green', marker='^', s=100)  # green triangle for buys
+		for date in sell_signals:
+			plt.scatter(date, closes[dates.index(date)], color='red', marker='v', s=100)  # red triangle for sells
+
 		# Add labels, title, and legend
 		plt.title(f"Price and SMAs for {symbol}", fontsize=16)
 		plt.xlabel("Date", fontsize=12)
@@ -169,6 +193,30 @@ class StockTuna:
 		# Plot each EMA
 		for period, ema_values in ema_data.items():
 			plt.plot(dates, ema_values, label=f"EMA {period}", linestyle='--')
+
+		# Assuming you have at least two periods in 'periods' list and ema_data contains valid data
+		if len(periods) >= 2:
+			buy_signals = []
+			sell_signals = []
+			for i in range(1, len(dates)):
+				# Skip the loop iteration if any EMA value is None
+				if ema_data[periods[0]][i] is None or ema_data[periods[1]][i] is None or \
+						ema_data[periods[0]][i - 1] is None or ema_data[periods[1]][i - 1] is None:
+					continue
+
+				# Check for crossover to determine buy/sell signals
+				if (ema_data[periods[0]][i] > ema_data[periods[1]][i] and
+						ema_data[periods[0]][i - 1] <= ema_data[periods[1]][i - 1]):
+					buy_signals.append(dates[i])
+				elif (ema_data[periods[0]][i] < ema_data[periods[1]][i] and
+					  ema_data[periods[0]][i - 1] >= ema_data[periods[1]][i - 1]):
+					sell_signals.append(dates[i])
+
+		# Plot buy and sell signals
+		for date in buy_signals:
+			plt.scatter(date, closes[dates.index(date)], color='green', marker='^', s=100)  # green triangle for buys
+		for date in sell_signals:
+			plt.scatter(date, closes[dates.index(date)], color='red', marker='v', s=100)  # red triangle for sells
 
 		# Add labels, title, and legend
 		plt.title(f"Price and EMAs for {symbol}", fontsize=16)
@@ -255,11 +303,23 @@ class StockTuna:
 
 		# Plot RSI values on a secondary y-axis
 		ax2 = ax1.twinx()
-		ax2.plot(dates[period-1:], rsi_values, label=f"RSI {period}", color='blue', linewidth=1.5)
+		ax2.plot(dates[period - 1:], rsi_values, label=f"RSI {period}", color='blue', linewidth=1.5)
 		ax2.axhline(70, color='red', linestyle='--', linewidth=1, label="Overbought (70)")
 		ax2.axhline(30, color='green', linestyle='--', linewidth=1, label="Oversold (30)")
 		ax2.set_ylabel("RSI", fontsize=12, color='blue')
 		ax2.tick_params(axis='y', labelcolor='blue')
+
+		# Define buy and sell signals based on RSI threshold crossovers
+		buy_signals = [dates[i] for i in range(period - 1, len(rsi_values) + period - 1) if
+					   rsi_values[i - (period - 1)] > 30 and rsi_values[i - (period - 1) - 1] <= 30]
+		sell_signals = [dates[i] for i in range(period - 1, len(rsi_values) + period - 1) if
+						rsi_values[i - (period - 1)] < 70 and rsi_values[i - (period - 1) - 1] >= 70]
+
+		# Plot buy and sell signals on the price chart
+		for date in buy_signals:
+			ax1.scatter(date, prices[dates.index(date)], color='green', marker='^', s=100)  # green triangle for buys
+		for date in sell_signals:
+			ax1.scatter(date, prices[dates.index(date)], color='red', marker='v', s=100)  # red triangle for sells
 
 		# Add title and legends
 		plt.title(f"RSI ({period}) and Price for {symbol}", fontsize=16)
