@@ -6,10 +6,10 @@ The script backtested a crossover strategy using exponential moving averages (EM
 
 Below are the best-performing \( x \) and \( y \) values for each stock index, along with their corresponding percentage gain:
 
-| **Index**         | **Best SMA(x, y)** | **Gain (%)** |
+| **Index**         | **Best EMA(x, y)** | **Gain (%)** |
 |:------------------:|:------------------:|:------------:|
-| NYSE Fang         |       24, 25       |    17.96%    |
-| DJIA              |       24, 25       |    7.68%     |
-| NASDAQ 100        |        0, 0        |    0.00%     |
-| S&P 500           |        0, 0        |    0.00%     |
+| NYSE Fang         |       2, 16        |    21.25%    |
+| DJIA              |       23, 25       |    8.05%     |
+| NASDAQ 100        |        1, 2        |    5.62%     |
+| S&P 500           |        1, 2        |    8.17%     |
 | Russell 2000      |        0, 0        |    0.00%     |
