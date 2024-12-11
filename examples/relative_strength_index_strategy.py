@@ -10,10 +10,10 @@ import matplotlib.ticker as mtick
 verbosity = 2
 tuna = PaperTuna(verbosity)
 timeframe = TimeFrame.Day
-investment_time = 365
+investment_time = 100
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')
 rsi_period = 5
-symbol = "GME"
+symbol = "GOOGL"
 
 """
 function to backtest current strategy
@@ -27,6 +27,7 @@ def backtest(symbol):
 	tuna.stocktuna.rsi_graph(bars,rsi_period,symbol)
 	# Calculate RSI values
 	rsi_values = tuna.stocktuna.rsi(bars, rsi_period)
+	tuna.stocktuna.rsi_graph(bars,rsi_period,symbol)
 
 	# Identify Buy/Sell Signals using Relative Strength Index
 	buy_signals = []
