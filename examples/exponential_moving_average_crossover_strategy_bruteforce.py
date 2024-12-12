@@ -9,8 +9,8 @@ import matplotlib.ticker as mtick
 verbosity = 1
 tuna = PaperTuna(verbosity)
 index = tuna.stocktuna.nyse_fang
-short_period_range = range(1, 30)
-long_period_range = range(1, 30)
+short_period_range = range(6, 30)
+long_period_range = range(6, 30)
 timeframe = TimeFrame.Day
 investment_time = 365
 start_date = (datetime.now() - timedelta(days=investment_time)).strftime('%Y-%m-%d')

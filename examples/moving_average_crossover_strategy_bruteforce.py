@@ -9,7 +9,7 @@ import matplotlib.ticker as mtick
 # config
 verbosity = 1
 tuna = PaperTuna(verbosity)
-index = tuna.stocktuna.russell_2000
+index = tuna.stocktuna.nyse_fang
 short_period_range = range(1, 30)
 long_period_range = range(1, 30)
 timeframe = TimeFrame.Day
