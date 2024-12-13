@@ -24,9 +24,15 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
   - **`sma(bars, period)`**: Calculates the Simple Moving Average (SMA) over a specified period.
   - **`rsi(bars, period)`**: Calculates the Relative Strength Index (RSI) for the given period.
 
-### Example: Moving Average Crossover Strategy
+### Example Code
 
-**`moving_average_crossover_strategy.py`**. demonstrates the use of PaperTuna to fetch historical stock data, calculate SMA values, and identify buy/sell signals based on a moving average crossover strategy. Using stock indices from cannedtuna.py, the script backtests the strategy with one year of historical data. It simulates trades using a $100,000 starting balance, tracks gains and losses, and calculates final portfolio performance, providing insight into the strategy’s effectiveness over time.
+Within `./examples/`, **`moving_average_crossover_strategy.py`**, **`exponential_moving_average_crossover_stragey.py`**, and **`relative_strength_index_strategy.py`** demonstrate the use of `PaperTuna` to fetch historical stock data, calculate the specified indicator, and identify buy/sell signals based on the data. Using hardcoded stock symbols or stock indices from cannedtuna.py, the script backtests the strategy with one year of historical data. It simulates trades using a $100,000 starting balance, tracks gains and losses, and calculates final portfolio performance, providing insight into the strategy’s effectiveness over time. Simply update the `symbol` variable for the stock to test, change the hardcoded indicator variables `short_period` and `long_period`, and run the script.
+
+Also within `./examples/`, the files **`moving_average_crossover_strategy_bruteforce.py`**, and **`exponential_moving_average_crossover_strategy_bruteforce.py`** demonstrate the use of the SMA and EMA functions to find the best parameters for use in these strategies. Hardcoded `short_period_range` and `long_period_range` variables can be modified to change the search space, while the `index` variable can be used for testing against a specific stock, a list of stocks, or a hardcoded index in `CannedTuna`. Examples of each can be found within these files. Simply update these variables, and run the script.
+
+### Example Results
+
+Within `./results/`, **`moving_average_crossover_strategy.md`**, and **`exponential_moving_average_crossover_stragey.md`**, the results of the bruteforcing scripts run against hardcode market indices from `CannedTuna`. These show the best SMA and EMA parameters for each stock market index found in `CannedTuna`.
 
 ## Get Started
 
