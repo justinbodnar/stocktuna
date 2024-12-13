@@ -6,8 +6,10 @@ from datetime import datetime, timedelta
 # config
 verbosity = 1
 tuna = PaperTuna(verbosity)
+# use this for an entire index
 index = tuna.stocktuna.nyse_fang
-index = ["RCAT"]
+# use this for a single stock
+#index = ["RCAT"]
 short_period_range = range(1, 30)
 long_period_range = range(1, 30)
 timeframe = TimeFrame.Day
