@@ -1,6 +1,5 @@
 import alpaca_trade_api as tradeapi
 import matplotlib.pyplot as plt
-from datetime import datetime
 import importlib.util
 from . import cannedtuna
 import os
@@ -70,7 +69,7 @@ class StockTuna:
 		api = tradeapi.REST(self.alpaca_key, self.alpaca_secret, base_url, api_version='v2')
 
 		if self.verbosity > 0:
-			print("API connection complete.")
+			print("API connection complete.\n")
 		return api
 
 	def sma(self, bars, period):

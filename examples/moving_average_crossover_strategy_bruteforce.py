@@ -2,14 +2,12 @@
 from stocktuna.stocktuna import PaperTuna
 from alpaca_trade_api.rest import TimeFrame
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.ticker as mtick
 
 # config
 verbosity = 1
 tuna = PaperTuna(verbosity)
 index = tuna.stocktuna.nyse_fang
+index = ["RCAT"]
 short_period_range = range(1, 30)
 long_period_range = range(1, 30)
 timeframe = TimeFrame.Day
@@ -38,14 +36,10 @@ def backtest(symbol):
 	sell_signals = []
 
 	for i in range(long_period, len(bars)):
-		# Ensure values are not None before comparison
 		if sma_short_values_full[i] is not None and sma_long_values_full[i] is not None and sma_short_values_full[i - 1] is not None and sma_long_values_full[i - 1] is not None:
-			# Moving Average Crossover Strategy for Buy/Sell Signals
 			if sma_short_values_full[i] > sma_long_values_full[i] and sma_short_values_full[i - 1] <= sma_long_values_full[i - 1]:
-				# Buy when short SMA crosses above long SMA
 				buy_signals.append(bars[i].t.strftime('%Y-%m-%d'))
 			elif sma_short_values_full[i] < sma_long_values_full[i] and sma_short_values_full[i - 1] >= sma_long_values_full[i - 1]:
-				# Sell when short SMA crosses below long SMA
 				sell_signals.append(bars[i].t.strftime('%Y-%m-%d'))
 
 	dates = [bar.t.strftime('%Y-%m-%d') for bar in bars]
@@ -54,24 +48,8 @@ def backtest(symbol):
 	# Initialize variables for paper trading
 	original_cash_balance = cash_balance = 100000  # Starting with $100,000
 	position = 0  # Initial position (number of shares held)
-	initial_cash_balance = cash_balance
 	investment_value = 0  # Value of the current investments
-
-	# Iterate through the bars to simulate paper trading
-	def price_at_date(bars, date):
-		for bar in bars:
-			if bar.t.strftime('%Y-%m-%d') == date:
-				return bar.c
-		return None
-
-	def find_bar_index(bars, date):
-		for idx, bar in enumerate(bars):
-			if bar.t.strftime('%Y-%m-%d') == date:
-				return idx
-		return -1
-
-	# List of all transactions
-	transactions = []
+	transactions = []  # List of all transactions
 
 	date_idx = 0
 	for date in dates:
@@ -92,6 +70,9 @@ def backtest(symbol):
 		date_idx += 1
 
 	final_value = cash_balance + (position * closing_prices[-1])
+	final_stock_change = ((closing_prices[-1] - closing_prices[0]) / closing_prices[0]) * 100
+	strategy_change = ((final_value - original_cash_balance) / original_cash_balance) * 100
+	performance_difference = strategy_change - final_stock_change
 
 	if verbosity > 1:
 		# Print the transactions
@@ -102,15 +83,22 @@ def backtest(symbol):
 				profit = round(qty * price - (qty * transactions[transactions.index((date, action, price, qty, new_balance)) - 1][2]), 2)
 				print(f"{date}: Sell {qty} shares at ${price:.2f}, New Balance: ${new_balance:.2f}, Profit: ${profit:.2f}")
 
-		# Print the final value
-		print(f"\nFinal Portfolio Value: ${final_value:.2f}")
-	return "{:.2f}".format((((final_value - original_cash_balance) / original_cash_balance) * 100))
+	if verbosity > 0:
+		# Print overall stock and strategy performance
+		print(f"Stock change over the period: {final_stock_change:.2f}%")
+		print(f"Strategy change over the period: {strategy_change:.2f}%")
+		print(f"Performance difference (strategy vs. holding): {performance_difference:.2f}%")
+
+		# Print the final value with commas
+		print(f"Final Portfolio Value: ${final_value:,.2f}")
+
+	return "{:.2f}".format(performance_difference)
 
 # Variables to track highest and lowest averages and their respective parameters
 highest_avg = float('-inf')
 lowest_avg = float('inf')
-best_params = None
-worst_params = None
+best_params = [ 0, 0 ]
+worst_params = [ 0, 0 ]
 
 # Calculate the total number of valid combinations
 total_combinations = sum(1 for short_period in short_period_range for long_period in long_period_range if short_period < long_period)
@@ -122,6 +110,11 @@ for short_period in short_period_range:
 		if short_period >= long_period:
 			# Skip invalid combinations where short SMA is not less than long SMA
 			continue
+		# Update and print progress
+		tests_run += 1
+		progress = (tests_run / total_combinations) * 100
+		print(f"\n-[ Progress: {tests_run}/{total_combinations} tests run ({progress:.2f}%) ]-")
+		print(f"Highest Average: {highest_avg:.2f}% with parameters short_period={best_params[0]}, long_period={best_params[1]}")
 
 		# List to store results for the current parameter combination
 		results = []
@@ -147,12 +140,6 @@ for short_period in short_period_range:
 			if avg_result < lowest_avg:
 				lowest_avg = avg_result
 				worst_params = (short_period, long_period)
-
-		# Update and print progress
-		tests_run += 1
-		progress = (tests_run / total_combinations) * 100
-		print(f"Progress: {tests_run}/{total_combinations} tests run ({progress:.2f}%)")
-		print(f"\nHighest Average: {highest_avg:.2f}% with parameters short_period={best_params[0]}, long_period={best_params[1]}")
 
 # Print the results
 print(f"\nHighest Average: {highest_avg:.2f}% with parameters short_period={best_params[0]}, long_period={best_params[1]}")

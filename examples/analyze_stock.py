@@ -1,11 +1,6 @@
-from sysconfig import expand_makefile_vars
-
 from stocktuna.stocktuna import PaperTuna
 from alpaca_trade_api.rest import TimeFrame
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.ticker as mtick
 
 # config
 verbosity = 2
