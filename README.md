@@ -21,8 +21,11 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 - **LiveTuna**: Initializes a `LiveTuna` object for live trading using Alpaca's live trading API.
 - **StockTuna**: The core class that handles API connection and provides utility functions for data analysis.
   - **`get_api_connection(base_url)`**: Establishes a connection to the Alpaca API using provided credentials.
-  - **`sma(bars, period)`**: Calculates the Simple Moving Average (SMA) over a specified period.
-  - **`rsi(bars, period)`**: Calculates the Relative Strength Index (RSI) for the given period.
+  - **`sma(bars, period)`**: Calculates the Simple Moving Average (SMA) over a specified period, returning a list of values.
+  - **`sma_chart(bars, periods, symbol)`**: calculates and graphs a stock price against the SMAs for all input SMA periods. `periods` is an arbitrarily large list of integers representing all SMAs to be graphed. Chart is saved in `./examples/charts/`.
+  - **`ema(bars, period)`**: Calculates the Exponential Moving Average (EMA) over a specified period, returning a list of values.
+  - **`ema_chart(bars, periods, symbol)`**: calculates and graphs a stock price against the EMAs for all input EMA periods. `periods` is an arbitrarily large list of integers representing all EMAs to be graphed. Chart is saved in `./examples/charts/`.
+  - **`rsi(bars, period)`**: Calculates the Relative Strength Index (RSI) for the given period, and returns a list of the values.
 
 ### Example Code
 
