@@ -19,16 +19,16 @@ alpaca_secret = "blahblahblahblah"
 
 #### Paper Trading with `PaperTuna`
 To simulate trading activities without financial risk, initialize `PaperTuna` with your Alpaca credentials:
-\```python
-paper_trader = PaperTuna(alpaca_key='your_key', alpaca_secret='your_secret')
-\```
+```python
+papertuna = PaperTuna(alpaca_key='your_key', alpaca_secret='your_secret')
+```
 This class sets the API connection to the paper trading endpoint, allowing you to test strategies in a sandbox environment.
 
 #### Live Trading with `LiveTuna`
 For real transactions, use `LiveTuna`:
-\```python
-live_trader = LiveTuna(alpaca_key='your_key', alpaca_secret='your_secret')
-\```
+```python
+livetuna = LiveTuna(alpaca_key='your_key', alpaca_secret='your_secret')
+```
 This initializes a connection to the live trading API endpoint for actual trading operations.
 
 [Next Page: StockTuna.sma()](./sma.md)
