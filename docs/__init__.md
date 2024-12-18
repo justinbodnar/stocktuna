@@ -1,6 +1,6 @@
 # StockTuna Documentation
 
-[Previous Page: Overview](./overview.md)
+[Previous Page: Overview](./README.md)
 
 #### StockTuna.\_\_init\_\_( self, alpaca_key=None, alpaca_secret=None, verbosity=1 )
 
