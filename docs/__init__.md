@@ -1,6 +1,15 @@
 # StockTuna Documentation
 
-[Previous Page: Overview](./README.md)
+#### Sections
+
+- [Overview](README.md)
+- [~\_\_init\_\_( )](./__init__.md)
+- [sma( bars, period )](./sma.md)
+- [sma_graph( bars, periods, symbol)](sma_graph.md)
+- [ema( bars, period )](ema.md)
+- [ema_graph( bars, periods, symbol)](ema_graph.md)
+- [rsi( bars, period )](rsi.md)
+- [rsi_graph( bars, period, symbol)](rsi_graph.md)
 
 #### StockTuna.\_\_init\_\_( self, alpaca_key=None, alpaca_secret=None, verbosity=1 )
 
@@ -30,5 +39,3 @@ For real transactions, use `LiveTuna`:
 livetuna = LiveTuna(alpaca_key='your_key', alpaca_secret='your_secret')
 ```
 This initializes a connection to the live trading API endpoint for actual trading operations.
-
-[Next Page: StockTuna.sma()](./sma.md)
