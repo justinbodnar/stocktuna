@@ -10,7 +10,7 @@
 - [ema_graph( bars, periods, symbol)](ema_graph.md)
 - [rsi( bars, period )](rsi.md)
 - [rsi_graph( bars, period, symbol)](rsi_graph.md)
-- 
+
 Developed by Justin Bodnar  
 Website: [justinbodnar.com](http://justinbodnar.com)  
 Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
