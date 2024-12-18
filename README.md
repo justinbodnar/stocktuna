@@ -8,11 +8,13 @@ Email: [contact@justinbodnar.com](mailto:contact@justinbodnar.com)
 
 **StockTuna** is a Python library currently in pre-alpha development, designed for processing stock market and securities historical data. It integrates with the Alpaca API to provide users with real-time and historical market data, facilitating the development of sophisticated algorithmic trading strategies. Visit the official website at [stocktuna.com](http://stocktuna.com) for more information and resources.
 
+For a full list of StockTuna methods and code examples, visit the [Documentation Overview](docs/overview.md)
+
 ### Features of StockTuna
 
 - **Paper and Live Trading Modes**: Two subclasses (`PaperTuna` and `LiveTuna`) make it easy to switch between paper trading and live trading.
 - **Alpaca API Integration**: Direct access to real-time and historical market data via Alpaca.
-- **Indicator Functions**: Includes functions for calculating **Simple Moving Average (SMA)** and **Relative Strength Index (RSI)**.
+- **Indicator Functions**: Includes functions for calculating **Simple Moving Average (SMA)**, **Exponential Moving Average** and **Relative Strength Index (RSI)**.
 - **Predefined Market Indices**: A `cannedtuna.py` file contains hardcoded lists of stock symbols for major market indices, such as the Dow Jones, NASDAQ 100, NYSE FANG, and S&P 500.
 
 ### Available Classes and Functions

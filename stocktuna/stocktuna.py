@@ -261,8 +261,8 @@ class StockTuna:
 		avg_gain = total_gain / (period - 1)
 		avg_loss = total_loss / (period - 1) if total_loss > 0 else 1e-10  # To prevent division by zero
 
-		# Initialize RSI values list
-		rsi_values = []
+		# Initialize RSI values list with None for insufficient data
+		rsi_values = [None] * (period - 1)
 
 		# Calculate RSI for the first `period`
 		rs = avg_gain / avg_loss
@@ -302,17 +302,19 @@ class StockTuna:
 
 		# Plot RSI values on a secondary y-axis
 		ax2 = ax1.twinx()
-		ax2.plot(dates[period - 1:], rsi_values, label=f"RSI {period}", color='blue', linewidth=1.5)
+		ax2.plot(dates[period - 1:], rsi_values[period - 1:], label=f"RSI {period}", color='blue', linewidth=1.5)
 		ax2.axhline(70, color='red', linestyle='--', linewidth=1, label="Overbought (70)")
 		ax2.axhline(30, color='green', linestyle='--', linewidth=1, label="Oversold (30)")
 		ax2.set_ylabel("RSI", fontsize=12, color='blue')
 		ax2.tick_params(axis='y', labelcolor='blue')
 
 		# Define buy and sell signals based on RSI threshold crossovers
-		buy_signals = [dates[i] for i in range(period - 1, len(rsi_values) + period - 1) if
-					   rsi_values[i - (period - 1)] > 30 and rsi_values[i - (period - 1) - 1] <= 30]
-		sell_signals = [dates[i] for i in range(period - 1, len(rsi_values) + period - 1) if
-						rsi_values[i - (period - 1)] < 70 and rsi_values[i - (period - 1) - 1] >= 70]
+		buy_signals = [dates[i] for i in range(period, len(dates)) if
+					   rsi_values[i] is not None and rsi_values[i - 1] is not None and
+					   rsi_values[i] > 30 and rsi_values[i - 1] <= 30]
+		sell_signals = [dates[i] for i in range(period, len(dates)) if
+						rsi_values[i] is not None and rsi_values[i - 1] is not None and
+						rsi_values[i] < 70 and rsi_values[i - 1] >= 70]
 
 		# Plot buy and sell signals on the price chart
 		for date in buy_signals:
