@@ -82,6 +82,7 @@ Follow these steps to set up and start using StockTuna:
 ## To Do
 
 - **Expand Indicator Functions**: Need more mathematical functions like SMA, EMA, etc.
+- **Move all Alpaca calls into StockTuna**: The dev shouldn't need to use alpaca_trade_api.rest.TimeFrame outside of the class.
 
 ## About the Author
 
